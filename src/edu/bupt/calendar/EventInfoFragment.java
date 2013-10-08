@@ -111,8 +111,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class EventInfoFragment extends DialogFragment implements OnCheckedChangeListener,
-        CalendarController.EventHandler, OnClickListener, DeleteEventHelper.DeleteNotifyListener {
+public class EventInfoFragment extends DialogFragment implements
+        OnCheckedChangeListener, CalendarController.EventHandler,
+        OnClickListener, DeleteEventHelper.DeleteNotifyListener {
 
     public static final boolean DEBUG = false;
 
@@ -152,27 +153,33 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             | TOKEN_QUERY_REMINDERS;
     private int mCurrentQuery = 0;
 
-    private static final String[] EVENT_PROJECTION = new String[] {
-        Events._ID,                  // 0  do not remove; used in DeleteEventHelper
-        Events.TITLE,                // 1  do not remove; used in DeleteEventHelper
-        Events.RRULE,                // 2  do not remove; used in DeleteEventHelper
-        Events.ALL_DAY,              // 3  do not remove; used in DeleteEventHelper
-        Events.CALENDAR_ID,          // 4  do not remove; used in DeleteEventHelper
-        Events.DTSTART,              // 5  do not remove; used in DeleteEventHelper
-        Events._SYNC_ID,             // 6  do not remove; used in DeleteEventHelper
-        Events.EVENT_TIMEZONE,       // 7  do not remove; used in DeleteEventHelper
-        Events.DESCRIPTION,          // 8
-        Events.EVENT_LOCATION,       // 9
-        Calendars.CALENDAR_ACCESS_LEVEL,      // 10
-        Events.DISPLAY_COLOR,                 // 11
-        Events.HAS_ATTENDEE_DATA,    // 12
-        Events.ORGANIZER,            // 13
-        Events.HAS_ALARM,            // 14
-        Calendars.MAX_REMINDERS,     //15
-        Calendars.ALLOWED_REMINDERS, // 16
-        Events.CUSTOM_APP_PACKAGE,   // 17
-        Events.CUSTOM_APP_URI,       // 18
-        Events.ORIGINAL_SYNC_ID,     // 19 do not remove; used in DeleteEventHelper
+    private static final String[] EVENT_PROJECTION = new String[] { Events._ID, // 0
+                                                                                // do
+                                                                                // not
+                                                                                // remove;
+                                                                                // used
+                                                                                // in
+                                                                                // DeleteEventHelper
+            Events.TITLE, // 1 do not remove; used in DeleteEventHelper
+            Events.RRULE, // 2 do not remove; used in DeleteEventHelper
+            Events.ALL_DAY, // 3 do not remove; used in DeleteEventHelper
+            Events.CALENDAR_ID, // 4 do not remove; used in DeleteEventHelper
+            Events.DTSTART, // 5 do not remove; used in DeleteEventHelper
+            Events._SYNC_ID, // 6 do not remove; used in DeleteEventHelper
+            Events.EVENT_TIMEZONE, // 7 do not remove; used in DeleteEventHelper
+            Events.DESCRIPTION, // 8
+            Events.EVENT_LOCATION, // 9
+            Calendars.CALENDAR_ACCESS_LEVEL, // 10
+            Events.DISPLAY_COLOR, // 11
+            Events.HAS_ATTENDEE_DATA, // 12
+            Events.ORGANIZER, // 13
+            Events.HAS_ALARM, // 14
+            Calendars.MAX_REMINDERS, // 15
+            Calendars.ALLOWED_REMINDERS, // 16
+            Events.CUSTOM_APP_PACKAGE, // 17
+            Events.CUSTOM_APP_URI, // 18
+            Events.ORIGINAL_SYNC_ID, // 19 do not remove; used in
+                                     // DeleteEventHelper
     };
     private static final int EVENT_INDEX_ID = 0;
     private static final int EVENT_INDEX_TITLE = 1;
@@ -193,15 +200,14 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     private static final int EVENT_INDEX_CUSTOM_APP_PACKAGE = 17;
     private static final int EVENT_INDEX_CUSTOM_APP_URI = 18;
 
-
     private static final String[] ATTENDEES_PROJECTION = new String[] {
-        Attendees._ID,                      // 0
-        Attendees.ATTENDEE_NAME,            // 1
-        Attendees.ATTENDEE_EMAIL,           // 2
-        Attendees.ATTENDEE_RELATIONSHIP,    // 3
-        Attendees.ATTENDEE_STATUS,          // 4
-        Attendees.ATTENDEE_IDENTITY,        // 5
-        Attendees.ATTENDEE_ID_NAMESPACE     // 6
+            Attendees._ID, // 0
+            Attendees.ATTENDEE_NAME, // 1
+            Attendees.ATTENDEE_EMAIL, // 2
+            Attendees.ATTENDEE_RELATIONSHIP, // 3
+            Attendees.ATTENDEE_STATUS, // 4
+            Attendees.ATTENDEE_IDENTITY, // 5
+            Attendees.ATTENDEE_ID_NAMESPACE // 6
     };
     private static final int ATTENDEES_INDEX_ID = 0;
     private static final int ATTENDEES_INDEX_NAME = 1;
@@ -213,13 +219,13 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
     private static final String ATTENDEES_WHERE = Attendees.EVENT_ID + "=?";
 
-    private static final String ATTENDEES_SORT_ORDER = Attendees.ATTENDEE_NAME + " ASC, "
-            + Attendees.ATTENDEE_EMAIL + " ASC";
+    private static final String ATTENDEES_SORT_ORDER = Attendees.ATTENDEE_NAME
+            + " ASC, " + Attendees.ATTENDEE_EMAIL + " ASC";
 
     private static final String[] REMINDERS_PROJECTION = new String[] {
-        Reminders._ID,                      // 0
-        Reminders.MINUTES,            // 1
-        Reminders.METHOD           // 2
+            Reminders._ID, // 0
+            Reminders.MINUTES, // 1
+            Reminders.METHOD // 2
     };
     private static final int REMINDERS_INDEX_ID = 0;
     private static final int REMINDERS_MINUTES_ID = 1;
@@ -227,12 +233,11 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
     private static final String REMINDERS_WHERE = Reminders.EVENT_ID + "=?";
 
-    static final String[] CALENDARS_PROJECTION = new String[] {
-        Calendars._ID,           // 0
-        Calendars.CALENDAR_DISPLAY_NAME,  // 1
-        Calendars.OWNER_ACCOUNT, // 2
-        Calendars.CAN_ORGANIZER_RESPOND, // 3
-        Calendars.ACCOUNT_NAME // 4
+    static final String[] CALENDARS_PROJECTION = new String[] { Calendars._ID, // 0
+            Calendars.CALENDAR_DISPLAY_NAME, // 1
+            Calendars.OWNER_ACCOUNT, // 2
+            Calendars.CAN_ORGANIZER_RESPOND, // 3
+            Calendars.ACCOUNT_NAME // 4
     };
     static final int CALENDARS_INDEX_DISPLAY_NAME = 1;
     static final int CALENDARS_INDEX_OWNER_ACCOUNT = 2;
@@ -240,12 +245,12 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     static final int CALENDARS_INDEX_ACCOUNT_NAME = 4;
 
     static final String CALENDARS_WHERE = Calendars._ID + "=?";
-    static final String CALENDARS_DUPLICATE_NAME_WHERE = Calendars.CALENDAR_DISPLAY_NAME + "=?";
+    static final String CALENDARS_DUPLICATE_NAME_WHERE = Calendars.CALENDAR_DISPLAY_NAME
+            + "=?";
 
     private static final String NANP_ALLOWED_SYMBOLS = "()+-*#.";
     private static final int NANP_MIN_DIGITS = 7;
     private static final int NANP_MAX_DIGITS = 11;
-
 
     private View mView;
 
@@ -256,7 +261,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     private Cursor mCalendarsCursor;
     private Cursor mRemindersCursor;
 
-    private static float mScale = 0; // Used for supporting different screen densities
+    private static float mScale = 0; // Used for supporting different screen
+                                     // densities
 
     private static int mCustomAppIconSize = 32;
 
@@ -302,11 +308,10 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     private View mLoadingMsgView;
     private ObjectAnimator mAnimateAlpha;
     private long mLoadingMsgStartTime;
-    private static final int FADE_IN_TIME = 300;   // in milliseconds
-    private static final int LOADING_MSG_DELAY = 600;   // in milliseconds
+    private static final int FADE_IN_TIME = 300; // in milliseconds
+    private static final int LOADING_MSG_DELAY = 600; // in milliseconds
     private static final int LOADING_MSG_MIN_DISPLAY_TIME = 600;
-    private boolean mNoCrossFade = false;  // Used to prevent repeated cross-fade
-
+    private boolean mNoCrossFade = false; // Used to prevent repeated cross-fade
 
     private static final Pattern mWildcardPattern = Pattern.compile("^.*$");
 
@@ -318,31 +323,31 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     ArrayList<String> mCcEmails = new ArrayList<String>();
     private int mColor;
 
-
     private int mDefaultReminderMinutes;
-    private final ArrayList<LinearLayout> mReminderViews = new ArrayList<LinearLayout>(0);
+    private final ArrayList<LinearLayout> mReminderViews = new ArrayList<LinearLayout>(
+            0);
     public ArrayList<ReminderEntry> mReminders;
     public ArrayList<ReminderEntry> mOriginalReminders = new ArrayList<ReminderEntry>();
     public ArrayList<ReminderEntry> mUnsupportedReminders = new ArrayList<ReminderEntry>();
     private boolean mUserModifiedReminders = false;
 
     /**
-     * Contents of the "minutes" spinner.  This has default values from the XML file, augmented
-     * with any additional values that were already associated with the event.
+     * Contents of the "minutes" spinner. This has default values from the XML
+     * file, augmented with any additional values that were already associated
+     * with the event.
      */
     private ArrayList<Integer> mReminderMinuteValues;
     private ArrayList<String> mReminderMinuteLabels;
 
     /**
-     * Contents of the "methods" spinner.  The "values" list specifies the method constant
-     * (e.g. {@link Reminders#METHOD_ALERT}) associated with the labels.  Any methods that
-     * aren't allowed by the Calendar will be removed.
+     * Contents of the "methods" spinner. The "values" list specifies the method
+     * constant (e.g. {@link Reminders#METHOD_ALERT}) associated with the
+     * labels. Any methods that aren't allowed by the Calendar will be removed.
      */
     private ArrayList<Integer> mReminderMethodValues;
     private ArrayList<String> mReminderMethodLabels;
 
     private QueryHandler mHandler;
-
 
     private final Runnable mTZUpdater = new Runnable() {
         @Override
@@ -354,7 +359,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     private final Runnable mLoadingMsgAlphaUpdater = new Runnable() {
         @Override
         public void run() {
-            // Since this is run after a delay, make sure to only show the message
+            // Since this is run after a delay, make sure to only show the
+            // message
             // if the event's data is not shown yet.
             if (!mAnimateAlpha.isRunning() && mScrollView.getAlpha() == 0) {
                 mLoadingMsgStartTime = System.currentTimeMillis();
@@ -373,7 +379,7 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     private boolean mDismissOnResume = false;
     private int mX = -1;
     private int mY = -1;
-    private int mMinTop;         // Dialog cannot be above this location
+    private int mMinTop; // Dialog cannot be above this location
     private boolean mIsTabletConfig;
     private Activity mActivity;
     private Context mContext;
@@ -407,10 +413,10 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
                 // start calendar query
                 Uri uri = Calendars.CONTENT_URI;
-                String[] args = new String[] {
-                        Long.toString(mEventCursor.getLong(EVENT_INDEX_CALENDAR_ID))};
-                startQuery(TOKEN_QUERY_CALENDARS, null, uri, CALENDARS_PROJECTION,
-                        CALENDARS_WHERE, args, null);
+                String[] args = new String[] { Long.toString(mEventCursor
+                        .getLong(EVENT_INDEX_CALENDAR_ID)) };
+                startQuery(TOKEN_QUERY_CALENDARS, null, uri,
+                        CALENDARS_PROJECTION, CALENDARS_WHERE, args, null);
                 break;
             case TOKEN_QUERY_CALENDARS:
                 mCalendarsCursor = Utils.matrixCursorFromCursor(cursor);
@@ -423,8 +429,9 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
                     // start attendees query
                     uri = Attendees.CONTENT_URI;
-                    startQuery(TOKEN_QUERY_ATTENDEES, null, uri, ATTENDEES_PROJECTION,
-                            ATTENDEES_WHERE, args, ATTENDEES_SORT_ORDER);
+                    startQuery(TOKEN_QUERY_ATTENDEES, null, uri,
+                            ATTENDEES_PROJECTION, ATTENDEES_WHERE, args,
+                            ATTENDEES_SORT_ORDER);
                 } else {
                     sendAccessibilityEventIfQueryDone(TOKEN_QUERY_ATTENDEES);
                 }
@@ -452,19 +459,23 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                 SpannableStringBuilder sb = new SpannableStringBuilder();
 
                 // Label
-                String label = res.getString(R.string.view_event_calendar_label);
+                String label = res
+                        .getString(R.string.view_event_calendar_label);
                 sb.append(label).append(" ");
                 sb.setSpan(new StyleSpan(Typeface.BOLD), 0, label.length(),
                         Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
                 // Calendar display name
-                String calendarName = mCalendarsCursor.getString(CALENDARS_INDEX_DISPLAY_NAME);
+                String calendarName = mCalendarsCursor
+                        .getString(CALENDARS_INDEX_DISPLAY_NAME);
                 sb.append(calendarName);
 
                 // Show email account if display name is not unique and
                 // display name != email
-                String email = mCalendarsCursor.getString(CALENDARS_INDEX_OWNER_ACCOUNT);
-                if (cursor.getCount() > 1 && !calendarName.equalsIgnoreCase(email)) {
+                String email = mCalendarsCursor
+                        .getString(CALENDARS_INDEX_OWNER_ACCOUNT);
+                if (cursor.getCount() > 1
+                        && !calendarName.equalsIgnoreCase(email)) {
                     sb.append(" (").append(email).append(")");
                 }
 
@@ -475,15 +486,17 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             // All queries are done, show the view
             if (mCurrentQuery == TOKEN_QUERY_ALL) {
                 if (mLoadingMsgView.getAlpha() == 1) {
-                    // Loading message is showing, let it stay a bit more (to prevent
+                    // Loading message is showing, let it stay a bit more (to
+                    // prevent
                     // flashing) by adding a start delay to the event animation
-                    long timeDiff = LOADING_MSG_MIN_DISPLAY_TIME - (System.currentTimeMillis() -
-                            mLoadingMsgStartTime);
+                    long timeDiff = LOADING_MSG_MIN_DISPLAY_TIME
+                            - (System.currentTimeMillis() - mLoadingMsgStartTime);
                     if (timeDiff > 0) {
                         mAnimateAlpha.setStartDelay(timeDiff);
                     }
                 }
-                if (!mAnimateAlpha.isRunning() &&!mAnimateAlpha.isStarted() && !mNoCrossFade) {
+                if (!mAnimateAlpha.isRunning() && !mAnimateAlpha.isStarted()
+                        && !mNoCrossFade) {
                     mAnimateAlpha.start();
                 } else {
                     mScrollView.setAlpha(1);
@@ -500,8 +513,9 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         }
     }
 
-    public EventInfoFragment(Context context, Uri uri, long startMillis, long endMillis,
-            int attendeeResponse, boolean isDialog, int windowStyle) {
+    public EventInfoFragment(Context context, Uri uri, long startMillis,
+            long endMillis, int attendeeResponse, boolean isDialog,
+            int windowStyle) {
 
         Resources r = context.getResources();
         if (mScale == 0) {
@@ -530,12 +544,11 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     public EventInfoFragment() {
     }
 
-
-
-    public EventInfoFragment(Context context, long eventId, long startMillis, long endMillis,
-            int attendeeResponse, boolean isDialog, int windowStyle) {
-        this(context, ContentUris.withAppendedId(Events.CONTENT_URI, eventId), startMillis,
-                endMillis, attendeeResponse, isDialog, windowStyle);
+    public EventInfoFragment(Context context, long eventId, long startMillis,
+            long endMillis, int attendeeResponse, boolean isDialog,
+            int windowStyle) {
+        this(context, ContentUris.withAppendedId(Events.CONTENT_URI, eventId),
+                startMillis, endMillis, attendeeResponse, isDialog, windowStyle);
         mEventId = eventId;
     }
 
@@ -545,7 +558,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
         mReminderChangeListener = new OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view,
+                    int position, long id) {
                 Integer prevValue = (Integer) parent.getTag();
                 if (prevValue == null || prevValue != position) {
                     parent.setTag(position);
@@ -561,7 +575,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         };
 
         if (savedInstanceState != null) {
-            mIsDialog = savedInstanceState.getBoolean(BUNDLE_KEY_IS_DIALOG, false);
+            mIsDialog = savedInstanceState.getBoolean(BUNDLE_KEY_IS_DIALOG,
+                    false);
             mWindowStyle = savedInstanceState.getInt(BUNDLE_KEY_WINDOW_STYLE,
                     DIALOG_WINDOW_STYLE);
         }
@@ -584,7 +599,6 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
         a.width = mDialogWidth;
         a.height = mDialogHeight;
-
 
         // On tablets , do smart positioning of dialog
         // On phones , use the whole screen
@@ -650,27 +664,31 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             Bundle savedInstanceState) {
 
         if (savedInstanceState != null) {
-            mIsDialog = savedInstanceState.getBoolean(BUNDLE_KEY_IS_DIALOG, false);
+            mIsDialog = savedInstanceState.getBoolean(BUNDLE_KEY_IS_DIALOG,
+                    false);
             mWindowStyle = savedInstanceState.getInt(BUNDLE_KEY_WINDOW_STYLE,
                     DIALOG_WINDOW_STYLE);
-            mDeleteDialogVisible =
-                savedInstanceState.getBoolean(BUNDLE_KEY_DELETE_DIALOG_VISIBLE,false);
+            mDeleteDialogVisible = savedInstanceState.getBoolean(
+                    BUNDLE_KEY_DELETE_DIALOG_VISIBLE, false);
 
         }
 
         if (mWindowStyle == DIALOG_WINDOW_STYLE) {
-            mView = inflater.inflate(R.layout.event_info_dialog, container, false);
+            mView = inflater.inflate(R.layout.event_info_dialog, container,
+                    false);
         } else {
             mView = inflater.inflate(R.layout.event_info, container, false);
         }
-        mScrollView = (ScrollView) mView.findViewById(R.id.event_info_scroll_view);
+        mScrollView = (ScrollView) mView
+                .findViewById(R.id.event_info_scroll_view);
         mLoadingMsgView = mView.findViewById(R.id.event_info_loading_msg);
         mTitle = (TextView) mView.findViewById(R.id.title);
         mWhenDateTime = (TextView) mView.findViewById(R.id.when_datetime);
         mWhere = (TextView) mView.findViewById(R.id.where);
         mDesc = (ExpandableTextView) mView.findViewById(R.id.description);
         mHeadlines = mView.findViewById(R.id.event_info_headline);
-        mLongAttendees = (AttendeesView)mView.findViewById(R.id.long_attendee_list);
+        mLongAttendees = (AttendeesView) mView
+                .findViewById(R.id.long_attendee_list);
         mIsTabletConfig = Utils.getConfigBool(mActivity, R.bool.tablet_config);
 
         if (mUri == null) {
@@ -726,22 +744,28 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                 if (!mCanModifyCalendar) {
                     return;
                 }
-                mDeleteHelper =
-                        new DeleteEventHelper(mContext, mActivity, !mIsDialog && !mIsTabletConfig /* exitWhenDone */);
-                mDeleteHelper.setDeleteNotificationListener(EventInfoFragment.this);
-                mDeleteHelper.setOnDismissListener(createDeleteOnDismissListener());
+                mDeleteHelper = new DeleteEventHelper(mContext, mActivity,
+                        !mIsDialog && !mIsTabletConfig /* exitWhenDone */);
+                mDeleteHelper
+                        .setDeleteNotificationListener(EventInfoFragment.this);
+                mDeleteHelper
+                        .setOnDismissListener(createDeleteOnDismissListener());
                 mDeleteDialogVisible = true;
-                mDeleteHelper.delete(mStartMillis, mEndMillis, mEventId, -1, onDeleteRunnable);
+                mDeleteHelper.delete(mStartMillis, mEndMillis, mEventId, -1,
+                        onDeleteRunnable);
             }
         });
 
         // Hide Edit/Delete buttons if in full screen mode on a phone
-        if (!mIsDialog && !mIsTabletConfig || mWindowStyle == EventInfoFragment.FULL_WINDOW_STYLE) {
-            mView.findViewById(R.id.event_info_buttons_container).setVisibility(View.GONE);
+        if (!mIsDialog && !mIsTabletConfig
+                || mWindowStyle == EventInfoFragment.FULL_WINDOW_STYLE) {
+            mView.findViewById(R.id.event_info_buttons_container)
+                    .setVisibility(View.GONE);
         }
 
         // Create a listener for the email guests button
-        View emailAttendeesButton = mView.findViewById(R.id.email_attendees_button);
+        View emailAttendeesButton = mView
+                .findViewById(R.id.email_attendees_button);
         if (emailAttendeesButton != null) {
             emailAttendeesButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -764,9 +788,11 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
         // Set reminders variables
 
-        SharedPreferences prefs = GeneralPreferences.getSharedPreferences(mActivity);
+        SharedPreferences prefs = GeneralPreferences
+                .getSharedPreferences(mActivity);
         String defaultReminderString = prefs.getString(
-                GeneralPreferences.KEY_DEFAULT_REMINDER, GeneralPreferences.NO_REMINDER_STRING);
+                GeneralPreferences.KEY_DEFAULT_REMINDER,
+                GeneralPreferences.NO_REMINDER_STRING);
         mDefaultReminderMinutes = Integer.parseInt(defaultReminderString);
         prepareReminders();
 
@@ -789,7 +815,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     private void updateTitle() {
         Resources res = getActivity().getResources();
         if (mCanModifyCalendar && !mIsOrganizer) {
-            getActivity().setTitle(res.getString(R.string.event_info_title_invite));
+            getActivity().setTitle(
+                    res.getString(R.string.event_info_title_invite));
         } else {
             getActivity().setTitle(res.getString(R.string.event_info_title));
         }
@@ -798,6 +825,7 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     /**
      * Initializes the event cursor, which is expected to point to the first
      * (and only) result from a query.
+     * 
      * @return true if the cursor is empty.
      */
     private boolean initEventCursor() {
@@ -808,9 +836,11 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         mEventId = mEventCursor.getInt(EVENT_INDEX_ID);
         String rRule = mEventCursor.getString(EVENT_INDEX_RRULE);
         mIsRepeating = !TextUtils.isEmpty(rRule);
-        mHasAlarm = (mEventCursor.getInt(EVENT_INDEX_HAS_ALARM) == 1)?true:false;
+        mHasAlarm = (mEventCursor.getInt(EVENT_INDEX_HAS_ALARM) == 1) ? true
+                : false;
         mMaxReminders = mEventCursor.getInt(EVENT_INDEX_MAX_REMINDERS);
-        mCalendarAllowedReminders =  mEventCursor.getString(EVENT_INDEX_ALLOWED_REMINDERS);
+        mCalendarAllowedReminders = mEventCursor
+                .getString(EVENT_INDEX_ALLOWED_REMINDERS);
         return false;
     }
 
@@ -828,55 +858,63 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                 mNoResponseAttendees.clear();
 
                 do {
-                    int status = mAttendeesCursor.getInt(ATTENDEES_INDEX_STATUS);
-                    String name = mAttendeesCursor.getString(ATTENDEES_INDEX_NAME);
-                    String email = mAttendeesCursor.getString(ATTENDEES_INDEX_EMAIL);
+                    int status = mAttendeesCursor
+                            .getInt(ATTENDEES_INDEX_STATUS);
+                    String name = mAttendeesCursor
+                            .getString(ATTENDEES_INDEX_NAME);
+                    String email = mAttendeesCursor
+                            .getString(ATTENDEES_INDEX_EMAIL);
 
-                    if (mAttendeesCursor.getInt(ATTENDEES_INDEX_RELATIONSHIP) ==
-                            Attendees.RELATIONSHIP_ORGANIZER) {
+                    if (mAttendeesCursor.getInt(ATTENDEES_INDEX_RELATIONSHIP) == Attendees.RELATIONSHIP_ORGANIZER) {
 
                         // Overwrites the one from Event table if available
                         if (!TextUtils.isEmpty(name)) {
                             mEventOrganizerDisplayName = name;
                             if (!mIsOrganizer) {
-                                setVisibilityCommon(view, R.id.organizer_container, View.VISIBLE);
-                                setTextCommon(view, R.id.organizer, mEventOrganizerDisplayName);
+                                setVisibilityCommon(view,
+                                        R.id.organizer_container, View.VISIBLE);
+                                setTextCommon(view, R.id.organizer,
+                                        mEventOrganizerDisplayName);
                             }
                         }
                     }
 
-                    if (mCalendarOwnerAttendeeId == EditEventHelper.ATTENDEE_ID_NONE &&
-                            mCalendarOwnerAccount.equalsIgnoreCase(email)) {
-                        mCalendarOwnerAttendeeId = mAttendeesCursor.getInt(ATTENDEES_INDEX_ID);
-                        mOriginalAttendeeResponse = mAttendeesCursor.getInt(ATTENDEES_INDEX_STATUS);
+                    if (mCalendarOwnerAttendeeId == EditEventHelper.ATTENDEE_ID_NONE
+                            && mCalendarOwnerAccount.equalsIgnoreCase(email)) {
+                        mCalendarOwnerAttendeeId = mAttendeesCursor
+                                .getInt(ATTENDEES_INDEX_ID);
+                        mOriginalAttendeeResponse = mAttendeesCursor
+                                .getInt(ATTENDEES_INDEX_STATUS);
                     } else {
-                        String identity = mAttendeesCursor.getString(ATTENDEES_INDEX_IDENTITY);
-                        String idNamespace = mAttendeesCursor.getString(
-                                ATTENDEES_INDEX_ID_NAMESPACE);
+                        String identity = mAttendeesCursor
+                                .getString(ATTENDEES_INDEX_IDENTITY);
+                        String idNamespace = mAttendeesCursor
+                                .getString(ATTENDEES_INDEX_ID_NAMESPACE);
 
                         // Don't show your own status in the list because:
-                        //  1) it doesn't make sense for event without other guests.
-                        //  2) there's a spinner for that for events with guests.
-                        switch(status) {
-                            case Attendees.ATTENDEE_STATUS_ACCEPTED:
-                                mAcceptedAttendees.add(new Attendee(name, email,
-                                        Attendees.ATTENDEE_STATUS_ACCEPTED, identity,
-                                        idNamespace));
-                                break;
-                            case Attendees.ATTENDEE_STATUS_DECLINED:
-                                mDeclinedAttendees.add(new Attendee(name, email,
-                                        Attendees.ATTENDEE_STATUS_DECLINED, identity,
-                                        idNamespace));
-                                break;
-                            case Attendees.ATTENDEE_STATUS_TENTATIVE:
-                                mTentativeAttendees.add(new Attendee(name, email,
-                                        Attendees.ATTENDEE_STATUS_TENTATIVE, identity,
-                                        idNamespace));
-                                break;
-                            default:
-                                mNoResponseAttendees.add(new Attendee(name, email,
-                                        Attendees.ATTENDEE_STATUS_NONE, identity,
-                                        idNamespace));
+                        // 1) it doesn't make sense for event without other
+                        // guests.
+                        // 2) there's a spinner for that for events with guests.
+                        switch (status) {
+                        case Attendees.ATTENDEE_STATUS_ACCEPTED:
+                            mAcceptedAttendees.add(new Attendee(name, email,
+                                    Attendees.ATTENDEE_STATUS_ACCEPTED,
+                                    identity, idNamespace));
+                            break;
+                        case Attendees.ATTENDEE_STATUS_DECLINED:
+                            mDeclinedAttendees.add(new Attendee(name, email,
+                                    Attendees.ATTENDEE_STATUS_DECLINED,
+                                    identity, idNamespace));
+                            break;
+                        case Attendees.ATTENDEE_STATUS_TENTATIVE:
+                            mTentativeAttendees.add(new Attendee(name, email,
+                                    Attendees.ATTENDEE_STATUS_TENTATIVE,
+                                    identity, idNamespace));
+                            break;
+                        default:
+                            mNoResponseAttendees.add(new Attendee(name, email,
+                                    Attendees.ATTENDEE_STATUS_NONE, identity,
+                                    idNamespace));
                         }
                     }
                 } while (mAttendeesCursor.moveToNext());
@@ -895,16 +933,18 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         outState.putLong(BUNDLE_KEY_END_MILLIS, mEndMillis);
         outState.putBoolean(BUNDLE_KEY_IS_DIALOG, mIsDialog);
         outState.putInt(BUNDLE_KEY_WINDOW_STYLE, mWindowStyle);
-        outState.putBoolean(BUNDLE_KEY_DELETE_DIALOG_VISIBLE, mDeleteDialogVisible);
-        outState.putInt(BUNDLE_KEY_ATTENDEE_RESPONSE, mAttendeeResponseFromIntent);
+        outState.putBoolean(BUNDLE_KEY_DELETE_DIALOG_VISIBLE,
+                mDeleteDialogVisible);
+        outState.putInt(BUNDLE_KEY_ATTENDEE_RESPONSE,
+                mAttendeeResponseFromIntent);
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         // Show edit/delete buttons only in non-dialog configuration
-        if (!mIsDialog && !mIsTabletConfig || mWindowStyle == EventInfoFragment.FULL_WINDOW_STYLE) {
+        if (!mIsDialog && !mIsTabletConfig
+                || mWindowStyle == EventInfoFragment.FULL_WINDOW_STYLE) {
             inflater.inflate(R.menu.event_info_title_bar, menu);
             mMenu = menu;
             updateMenu();
@@ -927,31 +967,31 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         // the info activity
 
         switch (item.getItemId()) {
-            case android.R.id.home:
-                Utils.returnToCalendarHome(mContext);
-                mActivity.finish();
-                return true;
-            case R.id.info_action_edit:
-                Uri uri = ContentUris.withAppendedId(Events.CONTENT_URI, mEventId);
-                Intent intent = new Intent(Intent.ACTION_EDIT, uri);
-                intent.putExtra(EXTRA_EVENT_BEGIN_TIME, mStartMillis);
-                intent.putExtra(EXTRA_EVENT_END_TIME, mEndMillis);
-                intent.putExtra(EXTRA_EVENT_ALL_DAY, mAllDay);
-                intent.setClass(mActivity, EditEventActivity.class);
-                intent.putExtra(EVENT_EDIT_ON_LAUNCH, true);
-                startActivity(intent);
-                mActivity.finish();
-                break;
-            case R.id.info_action_delete:
-                mDeleteHelper =
-                        new DeleteEventHelper(mActivity, mActivity, true /* exitWhenDone */);
-                mDeleteHelper.setDeleteNotificationListener(EventInfoFragment.this);
-                mDeleteHelper.setOnDismissListener(createDeleteOnDismissListener());
-                mDeleteDialogVisible = true;
-                mDeleteHelper.delete(mStartMillis, mEndMillis, mEventId, -1, onDeleteRunnable);
-                break;
-            default:
-                break;
+        case android.R.id.home:
+            Utils.returnToCalendarHome(mContext);
+            mActivity.finish();
+            return true;
+        case R.id.info_action_edit:
+            Uri uri = ContentUris.withAppendedId(Events.CONTENT_URI, mEventId);
+            Intent intent = new Intent(Intent.ACTION_EDIT, uri);
+            intent.putExtra(EXTRA_EVENT_BEGIN_TIME, mStartMillis);
+            intent.putExtra(EXTRA_EVENT_END_TIME, mEndMillis);
+            intent.putExtra(EXTRA_EVENT_ALL_DAY, mAllDay);
+            intent.setClass(mActivity, EditEventActivity.class);
+            intent.putExtra(EVENT_EDIT_ON_LAUNCH, true);
+            startActivity(intent);
+            mActivity.finish();
+            break;
+        case R.id.info_action_delete:
+            mDeleteHelper = new DeleteEventHelper(mActivity, mActivity, true /* exitWhenDone */);
+            mDeleteHelper.setDeleteNotificationListener(EventInfoFragment.this);
+            mDeleteHelper.setOnDismissListener(createDeleteOnDismissListener());
+            mDeleteDialogVisible = true;
+            mDeleteHelper.delete(mStartMillis, mEndMillis, mEventId, -1,
+                    onDeleteRunnable);
+            break;
+        default:
+            break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -962,7 +1002,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         if (!mEventDeletionStarted) {
             boolean responseSaved = saveResponse();
             if (saveReminders() || responseSaved) {
-                Toast.makeText(getActivity(), R.string.saving_event, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.saving_event,
+                        Toast.LENGTH_SHORT).show();
             }
         }
         super.onDestroyView();
@@ -985,7 +1026,7 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     /**
      * Asynchronously saves the response to an invitation if the user changed
      * the response. Returns true if the database will be updated.
-     *
+     * 
      * @return true if the database will be changed
      */
     private boolean saveResponse() {
@@ -993,8 +1034,10 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             return false;
         }
 
-        RadioGroup radioGroup = (RadioGroup) getView().findViewById(R.id.response_value);
-        int status = getResponseFromButtonId(radioGroup.getCheckedRadioButtonId());
+        RadioGroup radioGroup = (RadioGroup) getView().findViewById(
+                R.id.response_value);
+        int status = getResponseFromButtonId(radioGroup
+                .getCheckedRadioButtonId());
         if (status == Attendees.ATTENDEE_STATUS_NONE) {
             return false;
         }
@@ -1018,23 +1061,23 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         // This is a repeating event
         int whichEvents = mEditResponseHelper.getWhichEvents();
         switch (whichEvents) {
-            case -1:
-                return false;
-            case UPDATE_SINGLE:
-                createExceptionResponse(mEventId, status);
-                return true;
-            case UPDATE_ALL:
-                updateResponse(mEventId, mCalendarOwnerAttendeeId, status);
-                return true;
-            default:
-                Log.e(TAG, "Unexpected choice for updating invitation response");
-                break;
+        case -1:
+            return false;
+        case UPDATE_SINGLE:
+            createExceptionResponse(mEventId, status);
+            return true;
+        case UPDATE_ALL:
+            updateResponse(mEventId, mCalendarOwnerAttendeeId, status);
+            return true;
+        default:
+            Log.e(TAG, "Unexpected choice for updating invitation response");
+            break;
         }
         return false;
     }
 
     private void updateResponse(long eventId, long attendeeId, int status) {
-        // Update the attendee status in the attendees table.  the provider
+        // Update the attendee status in the attendees table. the provider
         // takes care of updating the self attendance status.
         ContentValues values = new ContentValues();
 
@@ -1046,17 +1089,19 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
         Uri uri = ContentUris.withAppendedId(Attendees.CONTENT_URI, attendeeId);
 
-        mHandler.startUpdate(mHandler.getNextToken(), null, uri, values,
-                null, null, Utils.UNDO_DELAY);
+        mHandler.startUpdate(mHandler.getNextToken(), null, uri, values, null,
+                null, Utils.UNDO_DELAY);
     }
 
     /**
-     * Creates an exception to a recurring event.  The only change we're making is to the
-     * "self attendee status" value.  The provider will take care of updating the corresponding
-     * Attendees.attendeeStatus entry.
-     *
-     * @param eventId The recurring event.
-     * @param status The new value for selfAttendeeStatus.
+     * Creates an exception to a recurring event. The only change we're making
+     * is to the "self attendee status" value. The provider will take care of
+     * updating the corresponding Attendees.attendeeStatus entry.
+     * 
+     * @param eventId
+     *            The recurring event.
+     * @param status
+     *            The new value for selfAttendeeStatus.
      */
     private void createExceptionResponse(long eventId, int status) {
         ContentValues values = new ContentValues();
@@ -1067,26 +1112,27 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
         Uri exceptionUri = Uri.withAppendedPath(Events.CONTENT_EXCEPTION_URI,
                 String.valueOf(eventId));
-        ops.add(ContentProviderOperation.newInsert(exceptionUri).withValues(values).build());
+        ops.add(ContentProviderOperation.newInsert(exceptionUri)
+                .withValues(values).build());
 
-        mHandler.startBatch(mHandler.getNextToken(), null, CalendarContract.AUTHORITY, ops,
-                Utils.UNDO_DELAY);
-   }
+        mHandler.startBatch(mHandler.getNextToken(), null,
+                CalendarContract.AUTHORITY, ops, Utils.UNDO_DELAY);
+    }
 
     public static int getResponseFromButtonId(int buttonId) {
         int response;
         switch (buttonId) {
-            case R.id.response_yes:
-                response = Attendees.ATTENDEE_STATUS_ACCEPTED;
-                break;
-            case R.id.response_maybe:
-                response = Attendees.ATTENDEE_STATUS_TENTATIVE;
-                break;
-            case R.id.response_no:
-                response = Attendees.ATTENDEE_STATUS_DECLINED;
-                break;
-            default:
-                response = Attendees.ATTENDEE_STATUS_NONE;
+        case R.id.response_yes:
+            response = Attendees.ATTENDEE_STATUS_ACCEPTED;
+            break;
+        case R.id.response_maybe:
+            response = Attendees.ATTENDEE_STATUS_TENTATIVE;
+            break;
+        case R.id.response_no:
+            response = Attendees.ATTENDEE_STATUS_DECLINED;
+            break;
+        default:
+            response = Attendees.ATTENDEE_STATUS_NONE;
         }
         return response;
     }
@@ -1094,17 +1140,17 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     public static int findButtonIdForResponse(int response) {
         int buttonId;
         switch (response) {
-            case Attendees.ATTENDEE_STATUS_ACCEPTED:
-                buttonId = R.id.response_yes;
-                break;
-            case Attendees.ATTENDEE_STATUS_TENTATIVE:
-                buttonId = R.id.response_maybe;
-                break;
-            case Attendees.ATTENDEE_STATUS_DECLINED:
-                buttonId = R.id.response_no;
-                break;
-                default:
-                    buttonId = -1;
+        case Attendees.ATTENDEE_STATUS_ACCEPTED:
+            buttonId = R.id.response_yes;
+            break;
+        case Attendees.ATTENDEE_STATUS_TENTATIVE:
+            buttonId = R.id.response_maybe;
+            break;
+        case Attendees.ATTENDEE_STATUS_DECLINED:
+            buttonId = R.id.response_no;
+            break;
+        default:
+            buttonId = -1;
         }
         return buttonId;
     }
@@ -1114,9 +1160,9 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         // This ensures that we aren't in the process of closing and have been
         // unattached already
         if (c != null) {
-            CalendarController.getInstance(c).sendEventRelatedEvent(
-                    this, EventType.EDIT_EVENT, mEventId, mStartMillis, mEndMillis, 0
-                    , 0, -1);
+            CalendarController.getInstance(c).sendEventRelatedEvent(this,
+                    EventType.EDIT_EVENT, mEventId, mStartMillis, mEndMillis,
+                    0, 0, -1);
         }
     }
 
@@ -1139,9 +1185,11 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         String location = mEventCursor.getString(EVENT_INDEX_EVENT_LOCATION);
         String description = mEventCursor.getString(EVENT_INDEX_DESCRIPTION);
         String rRule = mEventCursor.getString(EVENT_INDEX_RRULE);
-        String eventTimezone = mEventCursor.getString(EVENT_INDEX_EVENT_TIMEZONE);
+        String eventTimezone = mEventCursor
+                .getString(EVENT_INDEX_EVENT_TIMEZONE);
 
-        mColor = Utils.getDisplayColorFromColor(mEventCursor.getInt(EVENT_INDEX_COLOR));
+        mColor = Utils.getDisplayColorFromColor(mEventCursor
+                .getInt(EVENT_INDEX_COLOR));
         mHeadlines.setBackgroundColor(mColor);
 
         // What
@@ -1154,24 +1202,28 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         String localTimezone = Utils.getTimeZone(mActivity, mTZUpdater);
 
         Resources resources = context.getResources();
-        String displayedDatetime = Utils.getDisplayedDatetime(mStartMillis, mEndMillis,
-                System.currentTimeMillis(), localTimezone, mAllDay, context);
+        String displayedDatetime = Utils.getDisplayedDatetime(mStartMillis,
+                mEndMillis, System.currentTimeMillis(), localTimezone, mAllDay,
+                context);
 
         String displayedTimezone = null;
         if (!mAllDay) {
-            displayedTimezone = Utils.getDisplayedTimezone(mStartMillis, localTimezone,
-                    eventTimezone);
+            displayedTimezone = Utils.getDisplayedTimezone(mStartMillis,
+                    localTimezone, eventTimezone);
         }
-        // Display the datetime.  Make the timezone (if any) transparent.
+        // Display the datetime. Make the timezone (if any) transparent.
         if (displayedTimezone == null) {
             setTextCommon(view, R.id.when_datetime, displayedDatetime);
         } else {
             int timezoneIndex = displayedDatetime.length();
             displayedDatetime += "  " + displayedTimezone;
-            SpannableStringBuilder sb = new SpannableStringBuilder(displayedDatetime);
+            SpannableStringBuilder sb = new SpannableStringBuilder(
+                    displayedDatetime);
             ForegroundColorSpan transparentColorSpan = new ForegroundColorSpan(
-                    resources.getColor(R.color.event_info_headline_transparent_color));
-            sb.setSpan(transparentColorSpan, timezoneIndex, displayedDatetime.length(),
+                    resources
+                            .getColor(R.color.event_info_headline_transparent_color));
+            sb.setSpan(transparentColorSpan, timezoneIndex,
+                    displayedDatetime.length(),
                     Spannable.SPAN_INCLUSIVE_INCLUSIVE);
             setTextCommon(view, R.id.when_datetime, sb);
         }
@@ -1187,7 +1239,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                 date.timezone = Time.TIMEZONE_UTC;
             }
             eventRecurrence.setStartDate(date);
-            repeatString = EventRecurrenceFormatter.getRepeatString(resources, eventRecurrence);
+            repeatString = EventRecurrenceFormatter.getRepeatString(resources,
+                    eventRecurrence);
         }
         if (repeatString == null) {
             view.findViewById(R.id.when_repeat).setVisibility(View.GONE);
@@ -1196,7 +1249,6 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         }
 
         // Organizer view is setup in the updateCalendar method
-
 
         // Where
         if (location == null || location.trim().length() == 0) {
@@ -1207,7 +1259,9 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                 textView.setAutoLinkMask(0);
                 textView.setText(location.trim());
                 try {
-                    linkifyTextView(textView);
+                    /** zzz */
+                    Linkify.addLinks(textView, mWildcardPattern, "geo:0,0?q=");
+                    // linkifyTextView(textView);
                 } catch (Exception ex) {
                     // unexpected
                     Log.e(TAG, "Linkification failed", ex);
@@ -1238,14 +1292,18 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
     private void updateCustomAppButton() {
         buttonSetup: {
-            final Button launchButton = (Button) mView.findViewById(R.id.launch_custom_app_button);
+            final Button launchButton = (Button) mView
+                    .findViewById(R.id.launch_custom_app_button);
             if (launchButton == null)
                 break buttonSetup;
 
-            final String customAppPackage = mEventCursor.getString(EVENT_INDEX_CUSTOM_APP_PACKAGE);
-            final String customAppUri = mEventCursor.getString(EVENT_INDEX_CUSTOM_APP_URI);
+            final String customAppPackage = mEventCursor
+                    .getString(EVENT_INDEX_CUSTOM_APP_PACKAGE);
+            final String customAppUri = mEventCursor
+                    .getString(EVENT_INDEX_CUSTOM_APP_URI);
 
-            if (TextUtils.isEmpty(customAppPackage) || TextUtils.isEmpty(customAppUri))
+            if (TextUtils.isEmpty(customAppPackage)
+                    || TextUtils.isEmpty(customAppUri))
                 break buttonSetup;
 
             PackageManager pm = mContext.getPackageManager();
@@ -1262,7 +1320,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             }
 
             Uri uri = ContentUris.withAppendedId(Events.CONTENT_URI, mEventId);
-            final Intent intent = new Intent(CalendarContract.ACTION_HANDLE_CUSTOM_EVENT, uri);
+            final Intent intent = new Intent(
+                    CalendarContract.ACTION_HANDLE_CUSTOM_EVENT, uri);
             intent.setPackage(customAppPackage);
             intent.putExtra(CalendarContract.EXTRA_CUSTOM_APP_URI, customAppUri);
             intent.putExtra(EXTRA_EVENT_BEGIN_TIME, mStartMillis);
@@ -1295,12 +1354,14 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                         startActivityForResult(intent, 0);
                     } catch (ActivityNotFoundException e) {
                         // Shouldn't happen as we checked it already
-                        setVisibilityCommon(mView, R.id.launch_custom_app_container, View.GONE);
+                        setVisibilityCommon(mView,
+                                R.id.launch_custom_app_container, View.GONE);
                     }
                 }
             });
 
-            setVisibilityCommon(mView, R.id.launch_custom_app_container, View.VISIBLE);
+            setVisibilityCommon(mView, R.id.launch_custom_app_container,
+                    View.VISIBLE);
             return;
 
         }
@@ -1310,10 +1371,13 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     }
 
     /**
-     * Finds North American Numbering Plan (NANP) phone numbers in the input text.
-     *
-     * @param text The text to scan.
-     * @return A list of [start, end) pairs indicating the positions of phone numbers in the input.
+     * Finds North American Numbering Plan (NANP) phone numbers in the input
+     * text.
+     * 
+     * @param text
+     *            The text to scan.
+     * @return A list of [start, end) pairs indicating the positions of phone
+     *         numbers in the input.
      */
     // @VisibleForTesting
     static int[] findNanpPhoneNumbers(CharSequence text) {
@@ -1326,12 +1390,14 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         }
 
         /*
-         * We can't just strip the whitespace out and crunch it down, because the whitespace
-         * is significant.  March through, trying to figure out where numbers start and end.
+         * We can't just strip the whitespace out and crunch it down, because
+         * the whitespace is significant. March through, trying to figure out
+         * where numbers start and end.
          */
         while (startPos < endPos) {
             // skip whitespace
-            while (Character.isWhitespace(text.charAt(startPos)) && startPos < endPos) {
+            while (Character.isWhitespace(text.charAt(startPos))
+                    && startPos < endPos) {
                 startPos++;
             }
             if (startPos == endPos) {
@@ -1343,10 +1409,11 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             if (matchEnd > startPos) {
                 list.add(startPos);
                 list.add(matchEnd);
-                startPos = matchEnd;    // skip past match
+                startPos = matchEnd; // skip past match
             } else {
                 // skip to next whitespace char
-                while (!Character.isWhitespace(text.charAt(startPos)) && startPos < endPos) {
+                while (!Character.isWhitespace(text.charAt(startPos))
+                        && startPos < endPos) {
                     startPos++;
                 }
             }
@@ -1360,25 +1427,22 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     }
 
     /**
-     * Checks to see if there is a valid phone number in the input, starting at the specified
-     * offset.  If so, the index of the last character + 1 is returned.  The input is assumed
-     * to begin with a non-whitespace character.
-     *
+     * Checks to see if there is a valid phone number in the input, starting at
+     * the specified offset. If so, the index of the last character + 1 is
+     * returned. The input is assumed to begin with a non-whitespace character.
+     * 
      * @return Exclusive end position, or -1 if not a match.
      */
     private static int findNanpMatchEnd(CharSequence text, int startPos) {
         /*
-         * A few interesting cases:
-         *   94043                              # too short, ignore
-         *   123456789012                       # too long, ignore
-         *   +1 (650) 555-1212                  # 11 digits, spaces
-         *   (650) 555-1212, (650) 555-1213     # two numbers, return first
-         *   1-650-555-1212                     # 11 digits with leading '1'
-         *   *#650.555.1212#*!                  # 10 digits, include #*, ignore trailing '!'
-         *   555.1212                           # 7 digits
-         *
-         * For the most part we want to break on whitespace, but it's common to leave a space
-         * between the initial '1' and/or after the area code.
+         * A few interesting cases: 94043 # too short, ignore 123456789012 # too
+         * long, ignore +1 (650) 555-1212 # 11 digits, spaces (650) 555-1212,
+         * (650) 555-1213 # two numbers, return first 1-650-555-1212 # 11 digits
+         * with leading '1' *#650.555.1212#*! # 10 digits, include #*, ignore
+         * trailing '!' 555.1212 # 7 digits
+         * 
+         * For the most part we want to break on whitespace, but it's common to
+         * leave a space between the initial '1' and/or after the area code.
          */
 
         int endPos = text.length();
@@ -1391,7 +1455,7 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             if (curPos < endPos) {
                 ch = text.charAt(curPos);
             } else {
-                ch = 27;    // fake invalid symbol at end to trigger loop break
+                ch = 27; // fake invalid symbol at end to trigger loop break
             }
 
             if (Character.isDigit(ch)) {
@@ -1404,8 +1468,7 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                     return -1;
                 }
             } else if (Character.isWhitespace(ch)) {
-                if (!(  (firstDigit == '1' && (foundDigits == 1 || foundDigits == 4)) ||
-                        (foundDigits == 3)) ) {
+                if (!((firstDigit == '1' && (foundDigits == 1 || foundDigits == 4)) || (foundDigits == 3))) {
                     break;
                 }
             } else if (NANP_ALLOWED_SYMBOLS.indexOf(ch) == -1) {
@@ -1416,8 +1479,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             curPos++;
         }
 
-        if ((firstDigit != '1' && (foundDigits == 7 || foundDigits == 10)) ||
-                (firstDigit == '1' && foundDigits == 11)) {
+        if ((firstDigit != '1' && (foundDigits == 7 || foundDigits == 10))
+                || (firstDigit == '1' && foundDigits == 11)) {
             // match
             return curPos;
         }
@@ -1426,34 +1489,37 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     }
 
     /**
-     * Replaces stretches of text that look like addresses and phone numbers with clickable
-     * links.
+     * Replaces stretches of text that look like addresses and phone numbers
+     * with clickable links.
      * <p>
      * This is really just an enhanced version of Linkify.addLinks().
      */
     private static void linkifyTextView(TextView textView) {
         /*
-         * If the text includes a street address like "1600 Amphitheater Parkway, 94043",
-         * the current Linkify code will identify "94043" as a phone number and invite
-         * you to dial it (and not provide a map link for the address).  We want to
-         * have better recognition of phone numbers without losing any of the existing
+         * If the text includes a street address like
+         * "1600 Amphitheater Parkway, 94043", the current Linkify code will
+         * identify "94043" as a phone number and invite you to dial it (and not
+         * provide a map link for the address). We want to have better
+         * recognition of phone numbers without losing any of the existing
          * annotations.
-         *
-         * Ideally this would be addressed by improving Linkify.  For now we manage it as
-         * a second pass over the text.
-         *
-         * URIs and e-mail addresses are pretty easy to pick out of text.  Phone numbers
-         * are a bit tricky because they have radically different formats in different
-         * countries, in terms of both the digits and the way in which they are commonly
-         * written or presented (e.g. the punctuation and spaces in "(650) 555-1212").
-         * The expected format of a street address is defined in WebView.findAddress().  It's
-         * pretty narrowly defined, so it won't often match.
-         *
+         * 
+         * Ideally this would be addressed by improving Linkify. For now we
+         * manage it as a second pass over the text.
+         * 
+         * URIs and e-mail addresses are pretty easy to pick out of text. Phone
+         * numbers are a bit tricky because they have radically different
+         * formats in different countries, in terms of both the digits and the
+         * way in which they are commonly written or presented (e.g. the
+         * punctuation and spaces in "(650) 555-1212"). The expected format of a
+         * street address is defined in WebView.findAddress(). It's pretty
+         * narrowly defined, so it won't often match.
+         * 
          * The RFC 3966 specification defines the format of a "tel:" URI.
          */
 
         /*
-         * If we're in the US, handle this specially.  Otherwise, punt to Linkify.
+         * If we're in the US, handle this specially. Otherwise, punt to
+         * Linkify.
          */
         String defaultPhoneRegion = System.getProperty("user.region", "US");
         if (!defaultPhoneRegion.equals("US")) {
@@ -1462,30 +1528,33 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         }
 
         /*
-         * Start by letting Linkify find anything that isn't a phone number.  We have to let it
-         * run first because every invocation removes all previous URLSpan annotations.
-         *
-         * Ideally we'd use the external/libphonenumber routines, but those aren't available
-         * to unbundled applications.
+         * Start by letting Linkify find anything that isn't a phone number. We
+         * have to let it run first because every invocation removes all
+         * previous URLSpan annotations.
+         * 
+         * Ideally we'd use the external/libphonenumber routines, but those
+         * aren't available to unbundled applications.
          */
-        boolean linkifyFoundLinks = Linkify.addLinks(textView,
-                Linkify.ALL & ~(Linkify.PHONE_NUMBERS));
+        boolean linkifyFoundLinks = Linkify.addLinks(textView, Linkify.ALL
+                & ~(Linkify.PHONE_NUMBERS));
 
         /*
          * Search for phone numbers.
-         *
-         * Some URIs contain strings of digits that look like phone numbers.  If both the URI
-         * scanner and the phone number scanner find them, we want the URI link to win.  Since
-         * the URI scanner runs first, we just need to avoid creating overlapping spans.
+         * 
+         * Some URIs contain strings of digits that look like phone numbers. If
+         * both the URI scanner and the phone number scanner find them, we want
+         * the URI link to win. Since the URI scanner runs first, we just need
+         * to avoid creating overlapping spans.
          */
         CharSequence text = textView.getText();
         int[] phoneSequences = findNanpPhoneNumbers(text);
 
         /*
-         * If the contents of the TextView are already Spannable (which will be the case if
-         * Linkify found stuff, but might not be otherwise), we can just add annotations
-         * to what's there.  If it's not, and we find phone numbers, we need to convert it to
-         * a Spannable form.  (This mimics the behavior of Linkable.addLinks().)
+         * If the contents of the TextView are already Spannable (which will be
+         * the case if Linkify found stuff, but might not be otherwise), we can
+         * just add annotations to what's there. If it's not, and we find phone
+         * numbers, we need to convert it to a Spannable form. (This mimics the
+         * behavior of Linkable.addLinks().)
          */
         Spannable spanText;
         if (text instanceof SpannableString) {
@@ -1495,35 +1564,38 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         }
 
         /*
-         * Get a list of any spans created by Linkify, for the overlapping span check.
+         * Get a list of any spans created by Linkify, for the overlapping span
+         * check.
          */
-        URLSpan[] existingSpans = spanText.getSpans(0, spanText.length(), URLSpan.class);
+        URLSpan[] existingSpans = spanText.getSpans(0, spanText.length(),
+                URLSpan.class);
 
         /*
-         * Insert spans for the numbers we found.  We generate "tel:" URIs.
+         * Insert spans for the numbers we found. We generate "tel:" URIs.
          */
         int phoneCount = 0;
         for (int match = 0; match < phoneSequences.length / 2; match++) {
-            int start = phoneSequences[match*2];
-            int end = phoneSequences[match*2 + 1];
+            int start = phoneSequences[match * 2];
+            int end = phoneSequences[match * 2 + 1];
 
             if (spanWillOverlap(spanText, existingSpans, start, end)) {
                 if (Log.isLoggable(TAG, Log.VERBOSE)) {
                     CharSequence seq = text.subSequence(start, end);
-                    Log.v(TAG, "Not linkifying " + seq + " as phone number due to overlap");
+                    Log.v(TAG, "Not linkifying " + seq
+                            + " as phone number due to overlap");
                 }
                 continue;
             }
 
             /*
-             * The Linkify code takes the matching span and strips out everything that isn't a
-             * digit or '+' sign.  We do the same here.  Extension numbers will get appended
-             * without a separator, but the dialer wasn't doing anything useful with ";ext="
-             * anyway.
+             * The Linkify code takes the matching span and strips out
+             * everything that isn't a digit or '+' sign. We do the same here.
+             * Extension numbers will get appended without a separator, but the
+             * dialer wasn't doing anything useful with ";ext=" anyway.
              */
 
-            //String dialStr = phoneUtil.format(match.number(),
-            //        PhoneNumberUtil.PhoneNumberFormat.RFC3966);
+            // String dialStr = phoneUtil.format(match.number(),
+            // PhoneNumberUtil.PhoneNumberFormat.RFC3966);
             StringBuilder dialBuilder = new StringBuilder();
             for (int i = start; i < end; i++) {
                 char ch = spanText.charAt(i);
@@ -1538,13 +1610,16 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         }
 
         if (phoneCount != 0) {
-            // If we had to "upgrade" to Spannable, store the object into the TextView.
+            // If we had to "upgrade" to Spannable, store the object into the
+            // TextView.
             if (spanText != text) {
                 textView.setText(spanText);
             }
 
-            // Linkify.addLinks() sets the TextView movement method if it finds any links.  We
-            // want to do the same here.  (This is cloned from Linkify.addLinkMovementMethod().)
+            // Linkify.addLinks() sets the TextView movement method if it finds
+            // any links. We
+            // want to do the same here. (This is cloned from
+            // Linkify.addLinkMovementMethod().)
             MovementMethod mm = textView.getMovementMethod();
 
             if ((mm == null) || !(mm instanceof LinkMovementMethod)) {
@@ -1563,10 +1638,11 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     }
 
     /**
-     * Determines whether a new span at [start,end) will overlap with any existing span.
+     * Determines whether a new span at [start,end) will overlap with any
+     * existing span.
      */
-    private static boolean spanWillOverlap(Spannable spanText, URLSpan[] spanList, int start,
-            int end) {
+    private static boolean spanWillOverlap(Spannable spanText,
+            URLSpan[] spanList, int start, int end) {
         if (start == end) {
             // empty span, ignore
             return false;
@@ -1574,8 +1650,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         for (URLSpan span : spanList) {
             int existingStart = spanText.getSpanStart(span);
             int existingEnd = spanText.getSpanEnd(span);
-            if ((start >= existingStart && start < existingEnd) ||
-                    end > existingStart && end <= existingEnd) {
+            if ((start >= existingStart && start < existingEnd)
+                    || end > existingStart && end <= existingEnd) {
                 return true;
             }
         }
@@ -1584,13 +1660,14 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     }
 
     private void sendAccessibilityEvent() {
-        AccessibilityManager am =
-            (AccessibilityManager) getActivity().getSystemService(Service.ACCESSIBILITY_SERVICE);
+        AccessibilityManager am = (AccessibilityManager) getActivity()
+                .getSystemService(Service.ACCESSIBILITY_SERVICE);
         if (!am.isEnabled()) {
             return;
         }
 
-        AccessibilityEvent event = AccessibilityEvent.obtain(AccessibilityEvent.TYPE_VIEW_FOCUSED);
+        AccessibilityEvent event = AccessibilityEvent
+                .obtain(AccessibilityEvent.TYPE_VIEW_FOCUSED);
         event.setClassName(getClass().getName());
         event.setPackageName(getActivity().getPackageName());
         List<CharSequence> text = event.getText();
@@ -1600,11 +1677,13 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         addFieldToAccessibilityEvent(text, mWhere, null);
         addFieldToAccessibilityEvent(text, null, mDesc);
 
-        RadioGroup response = (RadioGroup) getView().findViewById(R.id.response_value);
+        RadioGroup response = (RadioGroup) getView().findViewById(
+                R.id.response_value);
         if (response.getVisibility() == View.VISIBLE) {
             int id = response.getCheckedRadioButtonId();
             if (id != View.NO_ID) {
-                text.add(((TextView) getView().findViewById(R.id.response_label)).getText());
+                text.add(((TextView) getView()
+                        .findViewById(R.id.response_label)).getText());
                 text.add((((RadioButton) (response.findViewById(id))).getText() + PERIOD_SPACE));
             }
         }
@@ -1612,8 +1691,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         am.sendAccessibilityEvent(event);
     }
 
-    private void addFieldToAccessibilityEvent(List<CharSequence> text, TextView tv,
-            ExpandableTextView etv) {
+    private void addFieldToAccessibilityEvent(List<CharSequence> text,
+            TextView tv, ExpandableTextView etv) {
         CharSequence cs;
         if (tv != null) {
             cs = tv.getText();
@@ -1636,39 +1715,47 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         mCalendarOwnerAccount = "";
         if (mCalendarsCursor != null && mEventCursor != null) {
             mCalendarsCursor.moveToFirst();
-            String tempAccount = mCalendarsCursor.getString(CALENDARS_INDEX_OWNER_ACCOUNT);
+            String tempAccount = mCalendarsCursor
+                    .getString(CALENDARS_INDEX_OWNER_ACCOUNT);
             mCalendarOwnerAccount = (tempAccount == null) ? "" : tempAccount;
-            mOwnerCanRespond = mCalendarsCursor.getInt(CALENDARS_INDEX_OWNER_CAN_RESPOND) != 0;
-            mSyncAccountName = mCalendarsCursor.getString(CALENDARS_INDEX_ACCOUNT_NAME);
+            mOwnerCanRespond = mCalendarsCursor
+                    .getInt(CALENDARS_INDEX_OWNER_CAN_RESPOND) != 0;
+            mSyncAccountName = mCalendarsCursor
+                    .getString(CALENDARS_INDEX_ACCOUNT_NAME);
 
-            String displayName = mCalendarsCursor.getString(CALENDARS_INDEX_DISPLAY_NAME);
+            String displayName = mCalendarsCursor
+                    .getString(CALENDARS_INDEX_DISPLAY_NAME);
 
             // start duplicate calendars query
-            mHandler.startQuery(TOKEN_QUERY_DUPLICATE_CALENDARS, null, Calendars.CONTENT_URI,
-                    CALENDARS_PROJECTION, CALENDARS_DUPLICATE_NAME_WHERE,
-                    new String[] {displayName}, null);
+            mHandler.startQuery(TOKEN_QUERY_DUPLICATE_CALENDARS, null,
+                    Calendars.CONTENT_URI, CALENDARS_PROJECTION,
+                    CALENDARS_DUPLICATE_NAME_WHERE,
+                    new String[] { displayName }, null);
 
-            mEventOrganizerEmail = mEventCursor.getString(EVENT_INDEX_ORGANIZER);
-            mIsOrganizer = mCalendarOwnerAccount.equalsIgnoreCase(mEventOrganizerEmail);
+            mEventOrganizerEmail = mEventCursor
+                    .getString(EVENT_INDEX_ORGANIZER);
+            mIsOrganizer = mCalendarOwnerAccount
+                    .equalsIgnoreCase(mEventOrganizerEmail);
 
-            if (!TextUtils.isEmpty(mEventOrganizerEmail) &&
-                    !mEventOrganizerEmail.endsWith(Utils.MACHINE_GENERATED_ADDRESS)) {
+            if (!TextUtils.isEmpty(mEventOrganizerEmail)
+                    && !mEventOrganizerEmail
+                            .endsWith(Utils.MACHINE_GENERATED_ADDRESS)) {
                 mEventOrganizerDisplayName = mEventOrganizerEmail;
             }
 
             if (!mIsOrganizer && !TextUtils.isEmpty(mEventOrganizerDisplayName)) {
                 setTextCommon(view, R.id.organizer, mEventOrganizerDisplayName);
-                setVisibilityCommon(view, R.id.organizer_container, View.VISIBLE);
+                setVisibilityCommon(view, R.id.organizer_container,
+                        View.VISIBLE);
             } else {
                 setVisibilityCommon(view, R.id.organizer_container, View.GONE);
             }
-            mHasAttendeeData = mEventCursor.getInt(EVENT_INDEX_HAS_ATTENDEE_DATA) != 0;
-            mCanModifyCalendar = mEventCursor.getInt(EVENT_INDEX_ACCESS_LEVEL)
-                    >= Calendars.CAL_ACCESS_CONTRIBUTOR;
+            mHasAttendeeData = mEventCursor
+                    .getInt(EVENT_INDEX_HAS_ATTENDEE_DATA) != 0;
+            mCanModifyCalendar = mEventCursor.getInt(EVENT_INDEX_ACCESS_LEVEL) >= Calendars.CAL_ACCESS_CONTRIBUTOR;
             // TODO add "|| guestCanModify" after b/1299071 is fixed
             mCanModifyEvent = mCanModifyCalendar && mIsOrganizer;
-            mIsBusyFreeCalendar =
-                    mEventCursor.getInt(EVENT_INDEX_ACCESS_LEVEL) == Calendars.CAL_ACCESS_FREEBUSY;
+            mIsBusyFreeCalendar = mEventCursor.getInt(EVENT_INDEX_ACCESS_LEVEL) == Calendars.CAL_ACCESS_FREEBUSY;
 
             if (!mIsBusyFreeCalendar) {
 
@@ -1679,11 +1766,11 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                     public void onClick(View v) {
                         doEdit();
                         // For dialogs, just close the fragment
-                        // For full screen, close activity on phone, leave it for tablet
+                        // For full screen, close activity on phone, leave it
+                        // for tablet
                         if (mIsDialog) {
                             EventInfoFragment.this.dismiss();
-                        }
-                        else if (!mIsTabletConfig){
+                        } else if (!mIsTabletConfig) {
                             getActivity().finish();
                         }
                     }
@@ -1705,8 +1792,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
                 }
             }
 
-            if ((!mIsDialog && !mIsTabletConfig ||
-                    mWindowStyle == EventInfoFragment.FULL_WINDOW_STYLE) && mMenu != null) {
+            if ((!mIsDialog && !mIsTabletConfig || mWindowStyle == EventInfoFragment.FULL_WINDOW_STYLE)
+                    && mMenu != null) {
                 mActivity.invalidateOptionsMenu();
             }
         } else {
@@ -1735,8 +1822,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     }
 
     private void updateAttendees(View view) {
-        if (mAcceptedAttendees.size() + mDeclinedAttendees.size() +
-                mTentativeAttendees.size() + mNoResponseAttendees.size() > 0) {
+        if (mAcceptedAttendees.size() + mDeclinedAttendees.size()
+                + mTentativeAttendees.size() + mNoResponseAttendees.size() > 0) {
             mLongAttendees.clearAttendees();
             (mLongAttendees).addAttendees(mAcceptedAttendees);
             (mLongAttendees).addAttendees(mDeclinedAttendees);
@@ -1755,7 +1842,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
      * Initializes the list of 'to' and 'cc' emails from the attendee list.
      */
     private void updateEmailAttendees() {
-        // The declined attendees will go in the 'cc' line, all others will go in the 'to' line.
+        // The declined attendees will go in the 'cc' line, all others will go
+        // in the 'to' line.
         mToEmails = new ArrayList<String>();
         for (Attendee attendee : mAcceptedAttendees) {
             addIfEmailable(mToEmails, attendee.mEmail);
@@ -1771,24 +1859,30 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
             addIfEmailable(mCcEmails, attendee.mEmail);
         }
 
-        // The meeting organizer doesn't appear as an attendee sometimes (particularly
+        // The meeting organizer doesn't appear as an attendee sometimes
+        // (particularly
         // when viewing someone else's calendar), so add the organizer now.
-        if (mEventOrganizerEmail != null && !mToEmails.contains(mEventOrganizerEmail) &&
-                !mCcEmails.contains(mEventOrganizerEmail)) {
+        if (mEventOrganizerEmail != null
+                && !mToEmails.contains(mEventOrganizerEmail)
+                && !mCcEmails.contains(mEventOrganizerEmail)) {
             addIfEmailable(mToEmails, mEventOrganizerEmail);
         }
 
-        // The Email app behaves strangely when there is nothing in the 'mailto' part,
-        // so move all the 'cc' emails to the 'to' list.  Gmail works fine though.
+        // The Email app behaves strangely when there is nothing in the 'mailto'
+        // part,
+        // so move all the 'cc' emails to the 'to' list. Gmail works fine
+        // though.
         if (mToEmails.size() <= 0 && mCcEmails.size() > 0) {
             mToEmails.addAll(mCcEmails);
             mCcEmails.clear();
         }
 
         if (mToEmails.size() <= 0) {
-            setVisibilityCommon(mView, R.id.email_attendees_container, View.GONE);
+            setVisibilityCommon(mView, R.id.email_attendees_container,
+                    View.GONE);
         } else {
-            setVisibilityCommon(mView, R.id.email_attendees_container, View.VISIBLE);
+            setVisibilityCommon(mView, R.id.email_attendees_container,
+                    View.VISIBLE);
         }
     }
 
@@ -1798,13 +1892,16 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         mOriginalReminders.clear();
         mUnsupportedReminders.clear();
         while (cursor.moveToNext()) {
-            int minutes = cursor.getInt(EditEventHelper.REMINDERS_INDEX_MINUTES);
+            int minutes = cursor
+                    .getInt(EditEventHelper.REMINDERS_INDEX_MINUTES);
             int method = cursor.getInt(EditEventHelper.REMINDERS_INDEX_METHOD);
 
-            if (method != Reminders.METHOD_DEFAULT && !mReminderMethodValues.contains(method)) {
+            if (method != Reminders.METHOD_DEFAULT
+                    && !mReminderMethodValues.contains(method)) {
                 // Stash unsupported reminder types separately so we don't alter
                 // them in the UI
-                mUnsupportedReminders.add(ReminderEntry.valueOf(minutes, method));
+                mUnsupportedReminders.add(ReminderEntry
+                        .valueOf(minutes, method));
             } else {
                 mOriginalReminders.add(ReminderEntry.valueOf(minutes, method));
             }
@@ -1829,20 +1926,27 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
         if (mHasAlarm) {
             ArrayList<ReminderEntry> reminders = mOriginalReminders;
-            // Insert any minute values that aren't represented in the minutes list.
+            // Insert any minute values that aren't represented in the minutes
+            // list.
             for (ReminderEntry re : reminders) {
-                EventViewUtils.addMinutesToList(
-                        mActivity, mReminderMinuteValues, mReminderMinuteLabels, re.getMinutes());
+                EventViewUtils.addMinutesToList(mActivity,
+                        mReminderMinuteValues, mReminderMinuteLabels,
+                        re.getMinutes());
             }
-            // Create a UI element for each reminder.  We display all of the reminders we get
-            // from the provider, even if the count exceeds the calendar maximum.  (Also, for
+            // Create a UI element for each reminder. We display all of the
+            // reminders we get
+            // from the provider, even if the count exceeds the calendar
+            // maximum. (Also, for
             // a new event, we won't have a maxReminders value available.)
             for (ReminderEntry re : reminders) {
-                EventViewUtils.addReminder(mActivity, mScrollView, this, mReminderViews,
-                        mReminderMinuteValues, mReminderMinuteLabels, mReminderMethodValues,
-                        mReminderMethodLabels, re, Integer.MAX_VALUE, mReminderChangeListener);
+                EventViewUtils.addReminder(mActivity, mScrollView, this,
+                        mReminderViews, mReminderMinuteValues,
+                        mReminderMinuteLabels, mReminderMethodValues,
+                        mReminderMethodLabels, re, Integer.MAX_VALUE,
+                        mReminderChangeListener);
             }
-            EventViewUtils.updateAddReminderButton(mView, mReminderViews, mMaxReminders);
+            EventViewUtils.updateAddReminderButton(mView, mReminderViews,
+                    mMaxReminders);
             // TODO show unsupported reminder types in some fashion.
         }
     }
@@ -1852,22 +1956,24 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         // a) you can edit the event's containing calendar AND
         // b) you're not the organizer and only attendee AND
         // c) organizerCanRespond is enabled for the calendar
-        // (if the attendee data has been hidden, the visible number of attendees
+        // (if the attendee data has been hidden, the visible number of
+        // attendees
         // will be 1 -- the calendar owner's).
         // (there are more cases involved to be 100% accurate, such as
         // paying attention to whether or not an attendee status was
         // included in the feed, but we're currently omitting those corner cases
         // for simplicity).
 
-        // TODO Switch to EditEventHelper.canRespond when this class uses CalendarEventModel.
-        if (!mCanModifyCalendar || (mHasAttendeeData && mIsOrganizer && mNumOfAttendees <= 1) ||
-                (mIsOrganizer && !mOwnerCanRespond)) {
+        // TODO Switch to EditEventHelper.canRespond when this class uses
+        // CalendarEventModel.
+        if (!mCanModifyCalendar
+                || (mHasAttendeeData && mIsOrganizer && mNumOfAttendees <= 1)
+                || (mIsOrganizer && !mOwnerCanRespond)) {
             setVisibilityCommon(view, R.id.response_container, View.GONE);
             return;
         }
 
         setVisibilityCommon(view, R.id.response_container, View.VISIBLE);
-
 
         int response;
         if (mUserSetResponse != Attendees.ATTENDEE_STATUS_NONE) {
@@ -1879,7 +1985,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         }
 
         int buttonToCheck = findButtonIdForResponse(response);
-        RadioGroup radioGroup = (RadioGroup) view.findViewById(R.id.response_value);
+        RadioGroup radioGroup = (RadioGroup) view
+                .findViewById(R.id.response_value);
         radioGroup.check(buttonToCheck); // -1 clear all radio buttons
         radioGroup.setOnCheckedChangeListener(this);
     }
@@ -1901,16 +2008,18 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
     /**
      * Taken from com.google.android.gm.HtmlConversationActivity
-     *
-     * Send the intent that shows the Contact info corresponding to the email address.
+     * 
+     * Send the intent that shows the Contact info corresponding to the email
+     * address.
      */
     public void showContactInfo(Attendee attendee, Rect rect) {
         // First perform lookup query to find existing contact
         final ContentResolver resolver = getActivity().getContentResolver();
         final String address = attendee.mEmail;
-        final Uri dataUri = Uri.withAppendedPath(CommonDataKinds.Email.CONTENT_FILTER_URI,
-                Uri.encode(address));
-        final Uri lookupUri = ContactsContract.Data.getContactLookupUri(resolver, dataUri);
+        final Uri dataUri = Uri.withAppendedPath(
+                CommonDataKinds.Email.CONTENT_FILTER_URI, Uri.encode(address));
+        final Uri lookupUri = ContactsContract.Data.getContactLookupUri(
+                resolver, dataUri);
 
         if (lookupUri != null) {
             // Found matching contact, trigger QuickContact
@@ -1919,10 +2028,12 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         } else {
             // No matching contact, ask user to create one
             final Uri mailUri = Uri.fromParts("mailto", address, null);
-            final Intent intent = new Intent(Intents.SHOW_OR_CREATE_CONTACT, mailUri);
+            final Intent intent = new Intent(Intents.SHOW_OR_CREATE_CONTACT,
+                    mailUri);
 
             // Pass along full E-mail string for possible create dialog
-            Rfc822Token sender = new Rfc822Token(attendee.mName, attendee.mEmail, null);
+            Rfc822Token sender = new Rfc822Token(attendee.mName,
+                    attendee.mEmail, null);
             intent.putExtra(Intents.EXTRA_CREATE_DESCRIPTION, sender.toString());
 
             // Only provide personal name hint if we have one
@@ -1940,8 +2051,10 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         mIsPaused = true;
         mHandler.removeCallbacks(onDeleteRunnable);
         super.onPause();
-        // Remove event deletion alert box since it is being rebuild in the OnResume
-        // This is done to get the same behavior on OnResume since the AlertDialog is gone on
+        // Remove event deletion alert box since it is being rebuild in the
+        // OnResume
+        // This is done to get the same behavior on OnResume since the
+        // AlertDialog is gone on
         // rotation but not if you press the HOME key
         if (mDeleteDialogVisible && mDeleteHelper != null) {
             mDeleteHelper.dismissAlertDialog();
@@ -1962,11 +2075,11 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         }
         // Display the "delete confirmation" dialog if needed
         if (mDeleteDialogVisible) {
-            mDeleteHelper = new DeleteEventHelper(
-                    mContext, mActivity,
+            mDeleteHelper = new DeleteEventHelper(mContext, mActivity,
                     !mIsDialog && !mIsTabletConfig /* exitWhenDone */);
             mDeleteHelper.setOnDismissListener(createDeleteOnDismissListener());
-            mDeleteHelper.delete(mStartMillis, mEndMillis, mEventId, -1, onDeleteRunnable);
+            mDeleteHelper.delete(mStartMillis, mEndMillis, mEventId, -1,
+                    onDeleteRunnable);
         }
     }
 
@@ -2001,66 +2114,81 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         parent.removeView(reminderItem);
         mReminderViews.remove(reminderItem);
         mUserModifiedReminders = true;
-        EventViewUtils.updateAddReminderButton(mView, mReminderViews, mMaxReminders);
+        EventViewUtils.updateAddReminderButton(mView, mReminderViews,
+                mMaxReminders);
     }
 
-
     /**
-     * Add a new reminder when the user hits the "add reminder" button.  We use the default
-     * reminder time and method.
+     * Add a new reminder when the user hits the "add reminder" button. We use
+     * the default reminder time and method.
      */
     private void addReminder() {
         // TODO: when adding a new reminder, make it different from the
         // last one in the list (if any).
         if (mDefaultReminderMinutes == GeneralPreferences.NO_REMINDER) {
-            EventViewUtils.addReminder(mActivity, mScrollView, this, mReminderViews,
-                    mReminderMinuteValues, mReminderMinuteLabels, mReminderMethodValues,
-                    mReminderMethodLabels,
-                    ReminderEntry.valueOf(GeneralPreferences.REMINDER_DEFAULT_TIME), mMaxReminders,
-                    mReminderChangeListener);
+            EventViewUtils.addReminder(mActivity, mScrollView, this,
+                    mReminderViews, mReminderMinuteValues,
+                    mReminderMinuteLabels, mReminderMethodValues,
+                    mReminderMethodLabels, ReminderEntry
+                            .valueOf(GeneralPreferences.REMINDER_DEFAULT_TIME),
+                    mMaxReminders, mReminderChangeListener);
         } else {
-            EventViewUtils.addReminder(mActivity, mScrollView, this, mReminderViews,
-                    mReminderMinuteValues, mReminderMinuteLabels, mReminderMethodValues,
-                    mReminderMethodLabels, ReminderEntry.valueOf(mDefaultReminderMinutes),
+            EventViewUtils.addReminder(mActivity, mScrollView, this,
+                    mReminderViews, mReminderMinuteValues,
+                    mReminderMinuteLabels, mReminderMethodValues,
+                    mReminderMethodLabels,
+                    ReminderEntry.valueOf(mDefaultReminderMinutes),
                     mMaxReminders, mReminderChangeListener);
         }
 
-        EventViewUtils.updateAddReminderButton(mView, mReminderViews, mMaxReminders);
+        EventViewUtils.updateAddReminderButton(mView, mReminderViews,
+                mMaxReminders);
     }
 
     synchronized private void prepareReminders() {
         // Nothing to do if we've already built these lists _and_ we aren't
         // removing not allowed methods
         if (mReminderMinuteValues != null && mReminderMinuteLabels != null
-                && mReminderMethodValues != null && mReminderMethodLabels != null
+                && mReminderMethodValues != null
+                && mReminderMethodLabels != null
                 && mCalendarAllowedReminders == null) {
             return;
         }
-        // Load the labels and corresponding numeric values for the minutes and methods lists
-        // from the assets.  If we're switching calendars, we need to clear and re-populate the
-        // lists (which may have elements added and removed based on calendar properties).  This
-        // is mostly relevant for "methods", since we shouldn't have any "minutes" values in a
+        // Load the labels and corresponding numeric values for the minutes and
+        // methods lists
+        // from the assets. If we're switching calendars, we need to clear and
+        // re-populate the
+        // lists (which may have elements added and removed based on calendar
+        // properties). This
+        // is mostly relevant for "methods", since we shouldn't have any
+        // "minutes" values in a
         // new event that aren't in the default set.
         Resources r = mActivity.getResources();
-        mReminderMinuteValues = loadIntegerArray(r, R.array.reminder_minutes_values);
-        mReminderMinuteLabels = loadStringArray(r, R.array.reminder_minutes_labels);
-        mReminderMethodValues = loadIntegerArray(r, R.array.reminder_methods_values);
-        mReminderMethodLabels = loadStringArray(r, R.array.reminder_methods_labels);
+        mReminderMinuteValues = loadIntegerArray(r,
+                R.array.reminder_minutes_values);
+        mReminderMinuteLabels = loadStringArray(r,
+                R.array.reminder_minutes_labels);
+        mReminderMethodValues = loadIntegerArray(r,
+                R.array.reminder_methods_values);
+        mReminderMethodLabels = loadStringArray(r,
+                R.array.reminder_methods_labels);
 
-        // Remove any reminder methods that aren't allowed for this calendar.  If this is
-        // a new event, mCalendarAllowedReminders may not be set the first time we're called.
+        // Remove any reminder methods that aren't allowed for this calendar. If
+        // this is
+        // a new event, mCalendarAllowedReminders may not be set the first time
+        // we're called.
         if (mCalendarAllowedReminders != null) {
-            EventViewUtils.reduceMethodList(mReminderMethodValues, mReminderMethodLabels,
-                    mCalendarAllowedReminders);
+            EventViewUtils.reduceMethodList(mReminderMethodValues,
+                    mReminderMethodLabels, mCalendarAllowedReminders);
         }
         if (mView != null) {
             mView.invalidate();
         }
     }
 
-
     private boolean saveReminders() {
-        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>(3);
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>(
+                3);
 
         // Read reminders from UI
         mReminders = EventViewUtils.reminderItemsToReminders(mReminderViews,
@@ -2071,8 +2199,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
         Collections.sort(mReminders);
 
         // Check if there are any changes in the reminder
-        boolean changed = EditEventHelper.saveReminders(ops, mEventId, mReminders,
-                mOriginalReminders, false /* no force save */);
+        boolean changed = EditEventHelper.saveReminders(ops, mEventId,
+                mReminders, mOriginalReminders, false /* no force save */);
 
         if (!changed) {
             return false;
@@ -2080,7 +2208,8 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
         // save new reminders
         AsyncQueryService service = new AsyncQueryService(getActivity());
-        service.startBatch(0, null, Calendars.CONTENT_URI.getAuthority(), ops, 0);
+        service.startBatch(0, null, Calendars.CONTENT_URI.getAuthority(), ops,
+                0);
         // Update the "hasAlarm" field for the event
         Uri uri = ContentUris.withAppendedId(Events.CONTENT_URI, mEventId);
         int len = mReminders.size();
@@ -2094,10 +2223,10 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     }
 
     /**
-     * Adds the attendee's email to the list if:
-     *   (1) the attendee is not a resource like a conference room or another calendar.
-     *       Catch most of these by filtering out suffix calendar.google.com.
-     *   (2) the attendee is not the viewer, to prevent mailing himself.
+     * Adds the attendee's email to the list if: (1) the attendee is not a
+     * resource like a conference room or another calendar. Catch most of these
+     * by filtering out suffix calendar.google.com. (2) the attendee is not the
+     * viewer, to prevent mailing himself.
      */
     private void addIfEmailable(ArrayList<String> emailList, String email) {
         if (Utils.isEmailableFrom(email, mSyncAccountName)) {
@@ -2106,14 +2235,15 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     }
 
     /**
-     * Email all the attendees of the event, except for the viewer (so as to not email
-     * himself) and resources like conference rooms.
+     * Email all the attendees of the event, except for the viewer (so as to not
+     * email himself) and resources like conference rooms.
      */
     private void emailAttendees() {
-        String eventTitle = (mTitle == null || mTitle.getText() == null) ? null :
-                mTitle.getText().toString();
-        Intent emailIntent = Utils.createEmailAttendeesIntent(getActivity().getResources(),
-                eventTitle, null /* body */, mToEmails, mCcEmails, mCalendarOwnerAccount);
+        String eventTitle = (mTitle == null || mTitle.getText() == null) ? null
+                : mTitle.getText().toString();
+        Intent emailIntent = Utils.createEmailAttendeesIntent(getActivity()
+                .getResources(), eventTitle, null /* body */, mToEmails,
+                mCcEmails, mCalendarOwnerAccount);
         startActivity(emailIntent);
     }
 
@@ -2131,6 +2261,7 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
         return list;
     }
+
     /**
      * Loads a String array asset into a list.
      */
@@ -2146,15 +2277,15 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
 
     private Dialog.OnDismissListener createDeleteOnDismissListener() {
         return new Dialog.OnDismissListener() {
-                    @Override
-                    public void onDismiss(DialogInterface dialog) {
-                        // Since OnPause will force the dialog to dismiss , do
-                        // not change the dialog status
-                        if (!mIsPaused) {
-                            mDeleteDialogVisible = false;
-                        }
-                    }
-                };
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                // Since OnPause will force the dialog to dismiss , do
+                // not change the dialog status
+                if (!mIsPaused) {
+                    mDeleteDialogVisible = false;
+                }
+            }
+        };
     }
 
     public long getEventId() {
@@ -2164,13 +2295,14 @@ public class EventInfoFragment extends DialogFragment implements OnCheckedChange
     public long getStartMillis() {
         return mStartMillis;
     }
+
     public long getEndMillis() {
         return mEndMillis;
     }
-    private void setDialogSize(Resources r) {
-        mDialogWidth = (int)r.getDimension(R.dimen.event_info_dialog_width);
-        mDialogHeight = (int)r.getDimension(R.dimen.event_info_dialog_height);
-    }
 
+    private void setDialogSize(Resources r) {
+        mDialogWidth = (int) r.getDimension(R.dimen.event_info_dialog_width);
+        mDialogHeight = (int) r.getDimension(R.dimen.event_info_dialog_height);
+    }
 
 }

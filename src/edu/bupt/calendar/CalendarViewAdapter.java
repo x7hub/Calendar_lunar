@@ -17,7 +17,7 @@
 package edu.bupt.calendar;
 
 import edu.bupt.calendar.CalendarController.ViewType;
-
+import edu.bupt.calendar.lunar.Lunar;
 import android.content.Context;
 import android.os.Handler;
 import android.text.format.DateUtils;
@@ -333,6 +333,11 @@ public class CalendarViewAdapter extends BaseAdapter {
             dayOfWeek = DateUtils.formatDateRange(mContext, mFormatter, mMilliTime, mMilliTime,
                     DateUtils.FORMAT_SHOW_WEEKDAY, mTimeZone).toString();
         }
+
+        /** zzz */
+        Lunar.setLunar(t.year, t.month, t.monthDay);
+        dayOfWeek += Lunar.getLunarWithComma();
+        
         return dayOfWeek.toUpperCase();
     }
 

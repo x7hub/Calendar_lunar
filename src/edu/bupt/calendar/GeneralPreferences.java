@@ -43,10 +43,11 @@ import edu.bupt.calendar.alerts.AlertReceiver;
 
 public class GeneralPreferences extends PreferenceFragment implements
         OnSharedPreferenceChangeListener, OnPreferenceChangeListener {
-    // The name of the shared preferences file. This name must be maintained for historical
-    // reasons, as it's what PreferenceManager assigned the first time the file was created.
+    // The name of the shared preferences file. This name must be maintained for
+    // historical
+    // reasons, as it's what PreferenceManager assigned the first time the file
+    // was created.
     static final String SHARED_PREFS_NAME = "edu.bupt.calendar_preferences";
-
     // Preference keys
     public static final String KEY_HIDE_DECLINED = "preferences_hide_declined";
     public static final String KEY_WEEK_START_DAY = "preferences_week_start_day";
@@ -75,8 +76,8 @@ public class GeneralPreferences extends PreferenceFragment implements
     /** Key to SharePreference for default view (CalendarController.ViewType) */
     public static final String KEY_START_VIEW = "preferred_startView";
     /**
-     *  Key to SharePreference for default detail view (CalendarController.ViewType)
-     *  Typically used by widget
+     * Key to SharePreference for default detail view
+     * (CalendarController.ViewType) Typically used by widget
      */
     public static final String KEY_DETAILED_VIEW = "preferred_detailedView";
     public static final String KEY_DEFAULT_CALENDAR = "preference_defaultCalendar";
@@ -110,17 +111,22 @@ public class GeneralPreferences extends PreferenceFragment implements
     ListPreference mWeekStart;
     ListPreference mDefaultReminder;
 
+    /** zzz */
+    CheckBoxPreference mShowLunar;
+    public static final String KEY_SHOW_LUNAR = "preferences_show_lunar";
+
     private static CharSequence[][] mTimezones;
 
     /** Return a properly configured SharedPreferences instance */
     public static SharedPreferences getSharedPreferences(Context context) {
-        return context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        return context.getSharedPreferences(SHARED_PREFS_NAME,
+                Context.MODE_PRIVATE);
     }
 
     /** Set the default shared preferences in the proper context */
     public static void setDefaultValues(Context context) {
-        PreferenceManager.setDefaultValues(context, SHARED_PREFS_NAME, Context.MODE_PRIVATE,
-                R.xml.general_preferences, false);
+        PreferenceManager.setDefaultValues(context, SHARED_PREFS_NAME,
+                Context.MODE_PRIVATE, R.xml.general_preferences, false);
     }
 
     @Override
@@ -129,7 +135,8 @@ public class GeneralPreferences extends PreferenceFragment implements
 
         final Activity activity = getActivity();
 
-        // Make sure to always use the same preferences file regardless of the package name
+        // Make sure to always use the same preferences file regardless of the
+        // package name
         // we're running under
         final PreferenceManager preferenceManager = getPreferenceManager();
         final SharedPreferences sharedPreferences = getSharedPreferences(activity);
@@ -139,9 +146,12 @@ public class GeneralPreferences extends PreferenceFragment implements
         addPreferencesFromResource(R.xml.general_preferences);
 
         final PreferenceScreen preferenceScreen = getPreferenceScreen();
-        mAlert = (CheckBoxPreference) preferenceScreen.findPreference(KEY_ALERTS);
-        mVibrateWhen = (ListPreference) preferenceScreen.findPreference(KEY_ALERTS_VIBRATE_WHEN);
-        Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+        mAlert = (CheckBoxPreference) preferenceScreen
+                .findPreference(KEY_ALERTS);
+        mVibrateWhen = (ListPreference) preferenceScreen
+                .findPreference(KEY_ALERTS_VIBRATE_WHEN);
+        Vibrator vibrator = (Vibrator) activity
+                .getSystemService(Context.VIBRATOR_SERVICE);
         if (vibrator == null || !vibrator.hasVibrator()) {
             PreferenceCategory mAlertGroup = (PreferenceCategory) preferenceScreen
                     .findPreference(KEY_ALERTS_CATEGORY);
@@ -150,21 +160,31 @@ public class GeneralPreferences extends PreferenceFragment implements
             mVibrateWhen.setSummary(mVibrateWhen.getEntry());
         }
 
-        mRingtone = (RingtonePreference) preferenceScreen.findPreference(KEY_ALERTS_RINGTONE);
-        mPopup = (CheckBoxPreference) preferenceScreen.findPreference(KEY_ALERTS_POPUP);
-        mUseHomeTZ = (CheckBoxPreference) preferenceScreen.findPreference(KEY_HOME_TZ_ENABLED);
-        mHideDeclined = (CheckBoxPreference) preferenceScreen.findPreference(KEY_HIDE_DECLINED);
-        mWeekStart = (ListPreference) preferenceScreen.findPreference(KEY_WEEK_START_DAY);
-        mDefaultReminder = (ListPreference) preferenceScreen.findPreference(KEY_DEFAULT_REMINDER);
+        mRingtone = (RingtonePreference) preferenceScreen
+                .findPreference(KEY_ALERTS_RINGTONE);
+        mPopup = (CheckBoxPreference) preferenceScreen
+                .findPreference(KEY_ALERTS_POPUP);
+        mUseHomeTZ = (CheckBoxPreference) preferenceScreen
+                .findPreference(KEY_HOME_TZ_ENABLED);
+        mHideDeclined = (CheckBoxPreference) preferenceScreen
+                .findPreference(KEY_HIDE_DECLINED);
+        mWeekStart = (ListPreference) preferenceScreen
+                .findPreference(KEY_WEEK_START_DAY);
+        mDefaultReminder = (ListPreference) preferenceScreen
+                .findPreference(KEY_DEFAULT_REMINDER);
         mHomeTZ = (ListPreference) preferenceScreen.findPreference(KEY_HOME_TZ);
         String tz = mHomeTZ.getValue();
 
         mWeekStart.setSummary(mWeekStart.getEntry());
         mDefaultReminder.setSummary(mDefaultReminder.getEntry());
 
+        /** zzz */
+        mShowLunar = (CheckBoxPreference) preferenceScreen
+                .findPreference(KEY_SHOW_LUNAR);
+
         if (mTimezones == null) {
-            mTimezones = (new TimezoneAdapter(activity, tz, System.currentTimeMillis()))
-                    .getAllTimezones();
+            mTimezones = (new TimezoneAdapter(activity, tz,
+                    System.currentTimeMillis())).getAllTimezones();
         }
         mHomeTZ.setEntryValues(mTimezones[0]);
         mHomeTZ.setEntries(mTimezones[1]);
@@ -200,6 +220,8 @@ public class GeneralPreferences extends PreferenceFragment implements
         mHideDeclined.setOnPreferenceChangeListener(listener);
         mVibrateWhen.setOnPreferenceChangeListener(listener);
 
+        /** zzz */
+        mShowLunar.setOnPreferenceChangeListener(listener);
     }
 
     @Override
@@ -211,7 +233,8 @@ public class GeneralPreferences extends PreferenceFragment implements
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+            String key) {
         Activity a = getActivity();
         if (key.equals(KEY_ALERTS)) {
             updateChildPreferences();
@@ -238,7 +261,7 @@ public class GeneralPreferences extends PreferenceFragment implements
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         String tz;
         if (preference == mUseHomeTZ) {
-            if ((Boolean)newValue) {
+            if ((Boolean) newValue) {
                 tz = mHomeTZ.getValue();
             } else {
                 tz = CalendarCache.TIMEZONE_TYPE_AUTO;
@@ -248,8 +271,10 @@ public class GeneralPreferences extends PreferenceFragment implements
         } else if (preference == mHideDeclined) {
             mHideDeclined.setChecked((Boolean) newValue);
             Activity act = getActivity();
-            Intent intent = new Intent(Utils.getWidgetScheduledUpdateAction(act));
-            intent.setDataAndType(CalendarContract.CONTENT_URI, Utils.APPWIDGET_DATA_TYPE);
+            Intent intent = new Intent(
+                    Utils.getWidgetScheduledUpdateAction(act));
+            intent.setDataAndType(CalendarContract.CONTENT_URI,
+                    Utils.APPWIDGET_DATA_TYPE);
             act.sendBroadcast(intent);
             return true;
         } else if (preference == mHomeTZ) {
@@ -268,7 +293,7 @@ public class GeneralPreferences extends PreferenceFragment implements
             // TODO update this after b/3417832 is fixed
             return true;
         } else if (preference == mVibrateWhen) {
-            mVibrateWhen.setValue((String)newValue);
+            mVibrateWhen.setValue((String) newValue);
             mVibrateWhen.setSummary(mVibrateWhen.getEntry());
         } else {
             return true;
@@ -279,20 +304,22 @@ public class GeneralPreferences extends PreferenceFragment implements
     /**
      * If necessary, upgrades previous versions of preferences to the current
      * set of keys and values.
-     * @param prefs the preferences to upgrade
+     * 
+     * @param prefs
+     *            the preferences to upgrade
      */
     private void migrateOldPreferences(SharedPreferences prefs) {
         // If needed, migrate vibration setting from a previous version
-        if (!prefs.contains(KEY_ALERTS_VIBRATE_WHEN) &&
-                prefs.contains(KEY_ALERTS_VIBRATE)) {
-            int stringId = prefs.getBoolean(KEY_ALERTS_VIBRATE, false) ?
-                    R.string.prefDefault_alerts_vibrate_true :
-                    R.string.prefDefault_alerts_vibrate_false;
+        if (!prefs.contains(KEY_ALERTS_VIBRATE_WHEN)
+                && prefs.contains(KEY_ALERTS_VIBRATE)) {
+            int stringId = prefs.getBoolean(KEY_ALERTS_VIBRATE, false) ? R.string.prefDefault_alerts_vibrate_true
+                    : R.string.prefDefault_alerts_vibrate_false;
             mVibrateWhen.setValue(getActivity().getString(stringId));
         }
         // If needed, migrate the old alerts type settin
         if (!prefs.contains(KEY_ALERTS) && prefs.contains(KEY_ALERTS_TYPE)) {
-            String type = prefs.getString(KEY_ALERTS_TYPE, ALERT_TYPE_STATUS_BAR);
+            String type = prefs.getString(KEY_ALERTS_TYPE,
+                    ALERT_TYPE_STATUS_BAR);
             if (type.equals(ALERT_TYPE_OFF)) {
                 mAlert.setChecked(false);
                 mPopup.setChecked(false);
@@ -322,22 +349,21 @@ public class GeneralPreferences extends PreferenceFragment implements
             mRingtone.setEnabled(true);
             mPopup.setEnabled(true);
         } else {
-            mVibrateWhen.setValue(
-                    getActivity().getString(R.string.prefDefault_alerts_vibrate_false));
+            mVibrateWhen.setValue(getActivity().getString(
+                    R.string.prefDefault_alerts_vibrate_false));
             mVibrateWhen.setEnabled(false);
             mRingtone.setEnabled(false);
             mPopup.setEnabled(false);
         }
     }
 
-
     @Override
-    public boolean onPreferenceTreeClick(
-            PreferenceScreen preferenceScreen, Preference preference) {
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen,
+            Preference preference) {
         final String key = preference.getKey();
         if (KEY_CLEAR_SEARCH_HISTORY.equals(key)) {
-            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(),
-                    Utils.getSearchAuthority(getActivity()),
+            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(
+                    getActivity(), Utils.getSearchAuthority(getActivity()),
                     CalendarRecentSuggestionsProvider.MODE);
             suggestions.clearHistory();
             Toast.makeText(getActivity(), R.string.search_history_cleared,

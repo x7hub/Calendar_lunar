@@ -238,5 +238,6 @@
     <string name="more_string" msgid="8971577924280885648">"以及其他 <xliff:g id="COUNT">%1$s</xliff:g> 个..."</string>
     <string name="copy_email" msgid="7869435992461603532">"复制电子邮件地址"</string>
     <string name="copy_number" msgid="530057841276106843">"复制电话号码"</string>
+    <string name="preferences_show_lunar_title">显示农历</string>
 
 </resources>

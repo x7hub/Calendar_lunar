@@ -18,7 +18,6 @@ package edu.bupt.calendar.month;
 
 import edu.bupt.calendar.R;
 import edu.bupt.calendar.Utils;
-
 import android.app.Service;
 import android.content.Context;
 import android.content.res.Resources;
@@ -37,6 +36,8 @@ import android.view.accessibility.AccessibilityManager;
 
 import java.security.InvalidParameterException;
 import java.util.HashMap;
+
+import edu.bupt.calendar.lunar.Lunar;
 
 /**
  * <p>
@@ -119,7 +120,8 @@ public class SimpleWeekView extends View {
     protected String[] mDayNumbers;
     // Quick lookup for checking which days are in the focus month
     protected boolean[] mFocusDay;
-    // Quick lookup for checking which days are in an odd month (to set a different background)
+    // Quick lookup for checking which days are in an odd month (to set a
+    // different background)
     protected boolean[] mOddMonth;
     // The Julian day of the first day displayed by this item
     protected int mFirstJulianDay = -1;
@@ -166,19 +168,25 @@ public class SimpleWeekView extends View {
     protected int mTodayOutlineColor;
     protected int mWeekNumColor;
 
+    /** zzz */
+    protected String[] mLunarNumbers;
+
     public SimpleWeekView(Context context) {
         super(context);
 
         Resources res = context.getResources();
 
         mBGColor = res.getColor(R.color.month_bgcolor);
-        mSelectedWeekBGColor = res.getColor(R.color.month_selected_week_bgcolor);
+        mSelectedWeekBGColor = res
+                .getColor(R.color.month_selected_week_bgcolor);
         mFocusMonthColor = res.getColor(R.color.month_mini_day_number);
         mOtherMonthColor = res.getColor(R.color.month_other_month_day_number);
         mDaySeparatorColor = res.getColor(R.color.month_grid_lines);
-        mTodayOutlineColor = res.getColor(R.color.mini_month_today_outline_color);
+        mTodayOutlineColor = res
+                .getColor(R.color.mini_month_today_outline_color);
         mWeekNumColor = res.getColor(R.color.month_week_num_color);
-        mSelectedDayLine = res.getDrawable(R.drawable.dayline_minical_holo_light);
+        mSelectedDayLine = res
+                .getDrawable(R.drawable.dayline_minical_holo_light);
 
         if (mScale == 0) {
             mScale = context.getResources().getDisplayMetrics().density;
@@ -204,14 +212,16 @@ public class SimpleWeekView extends View {
      * will only update if a new value is included, except for focus month,
      * which will always default to no focus month if no value is passed in. See
      * {@link #VIEW_PARAMS_HEIGHT} for more info on parameters.
-     *
-     * @param params A map of the new parameters, see
-     *            {@link #VIEW_PARAMS_HEIGHT}
-     * @param tz The time zone this view should reference times in
+     * 
+     * @param params
+     *            A map of the new parameters, see {@link #VIEW_PARAMS_HEIGHT}
+     * @param tz
+     *            The time zone this view should reference times in
      */
     public void setWeekParams(HashMap<String, Integer> params, String tz) {
         if (!params.containsKey(VIEW_PARAMS_WEEK)) {
-            throw new InvalidParameterException("You must specify the week number for this view");
+            throw new InvalidParameterException(
+                    "You must specify the week number for this view");
         }
         setTag(params);
         mTimeZone = tz;
@@ -247,6 +257,9 @@ public class SimpleWeekView extends View {
         Time time = new Time(tz);
         time.setJulianDay(julianMonday);
 
+        /** zzz */
+        mLunarNumbers = new String[mNumCells];
+
         // If we're showing the week number calculate it based on Monday
         int i = 0;
         if (mShowWeekNum) {
@@ -279,15 +292,14 @@ public class SimpleWeekView extends View {
         mHasToday = false;
         mToday = -1;
 
-        int focusMonth = params.containsKey(VIEW_PARAMS_FOCUS_MONTH) ? params.get(
-                VIEW_PARAMS_FOCUS_MONTH)
-                : DEFAULT_FOCUS_MONTH;
+        int focusMonth = params.containsKey(VIEW_PARAMS_FOCUS_MONTH) ? params
+                .get(VIEW_PARAMS_FOCUS_MONTH) : DEFAULT_FOCUS_MONTH;
 
         for (; i < mNumCells; i++) {
             if (time.monthDay == 1) {
                 mFirstMonth = time.month;
             }
-            mOddMonth [i] = (time.month %2) == 1;
+            mOddMonth[i] = (time.month % 2) == 1;
             if (time.month == focusMonth) {
                 mFocusDay[i] = true;
             } else {
@@ -297,6 +309,11 @@ public class SimpleWeekView extends View {
                 mHasToday = true;
                 mToday = i;
             }
+
+            /** zzz */
+            Lunar.setLunar(time.year, time.month, time.monthDay);
+            mLunarNumbers[i] = Lunar.getLunarDayForDisplay();
+
             mDayNumbers[i] = Integer.toString(time.monthDay++);
             time.normalize(true);
         }
@@ -332,7 +349,7 @@ public class SimpleWeekView extends View {
 
     /**
      * Returns the month of the first day in this week
-     *
+     * 
      * @return The month the first day of this view is in
      */
     public int getFirstMonth() {
@@ -341,7 +358,7 @@ public class SimpleWeekView extends View {
 
     /**
      * Returns the month of the last day in this week
-     *
+     * 
      * @return The month the last day of this view is in
      */
     public int getLastMonth() {
@@ -350,7 +367,7 @@ public class SimpleWeekView extends View {
 
     /**
      * Returns the julian day of the first day in this view.
-     *
+     * 
      * @return The julian day of the first day in the view.
      */
     public int getFirstJulianDay() {
@@ -360,13 +377,15 @@ public class SimpleWeekView extends View {
     /**
      * Calculates the day that the given x position is in, accounting for week
      * number. Returns a Time referencing that day or null if
-     *
-     * @param x The x position of the touch event
+     * 
+     * @param x
+     *            The x position of the touch event
      * @return A time object for the tapped day or null if the position wasn't
      *         in a day
      */
     public Time getDayFromLocation(float x) {
-        int dayStart = mShowWeekNum ? (mWidth - mPadding * 2) / mNumCells + mPadding : mPadding;
+        int dayStart = mShowWeekNum ? (mWidth - mPadding * 2) / mNumCells
+                + mPadding : mPadding;
         if (x < dayStart || x > mWidth - mPadding) {
             return null;
         }
@@ -400,8 +419,9 @@ public class SimpleWeekView extends View {
     /**
      * This draws the selection highlight if a day is selected in this week.
      * Override this method if you wish to have a different background drawn.
-     *
-     * @param canvas The canvas to draw on
+     * 
+     * @param canvas
+     *            The canvas to draw on
      */
     protected void drawBackground(Canvas canvas) {
         if (mHasSelectedDay) {
@@ -423,11 +443,13 @@ public class SimpleWeekView extends View {
     /**
      * Draws the week and month day numbers for this week. Override this method
      * if you need different placement.
-     *
-     * @param canvas The canvas to draw on
+     * 
+     * @param canvas
+     *            The canvas to draw on
      */
     protected void drawWeekNums(Canvas canvas) {
-        int y = ((mHeight + MINI_DAY_NUMBER_TEXT_SIZE) / 2) - DAY_SEPARATOR_WIDTH;
+        int y = ((mHeight + MINI_DAY_NUMBER_TEXT_SIZE) / 2)
+                - DAY_SEPARATOR_WIDTH;
         int nDays = mNumCells;
 
         int i = 0;
@@ -444,18 +466,21 @@ public class SimpleWeekView extends View {
         }
 
         boolean isFocusMonth = mFocusDay[i];
-        mMonthNumPaint.setColor(isFocusMonth ? mFocusMonthColor : mOtherMonthColor);
+        mMonthNumPaint.setColor(isFocusMonth ? mFocusMonthColor
+                : mOtherMonthColor);
         mMonthNumPaint.setFakeBoldText(false);
         for (; i < nDays; i++) {
             if (mFocusDay[i] != isFocusMonth) {
                 isFocusMonth = mFocusDay[i];
-                mMonthNumPaint.setColor(isFocusMonth ? mFocusMonthColor : mOtherMonthColor);
+                mMonthNumPaint.setColor(isFocusMonth ? mFocusMonthColor
+                        : mOtherMonthColor);
             }
             if (mHasToday && mToday == i) {
                 mMonthNumPaint.setTextSize(MINI_TODAY_NUMBER_TEXT_SIZE);
                 mMonthNumPaint.setFakeBoldText(true);
             }
-            int x = (2 * i + 1) * (mWidth - mPadding * 2) / (divisor) + mPadding;
+            int x = (2 * i + 1) * (mWidth - mPadding * 2) / (divisor)
+                    + mPadding;
             canvas.drawText(mDayNumbers[i], x, y, mMonthNumPaint);
             if (mHasToday && mToday == i) {
                 mMonthNumPaint.setTextSize(MINI_DAY_NUMBER_TEXT_SIZE);
@@ -467,8 +492,9 @@ public class SimpleWeekView extends View {
     /**
      * Draws a horizontal line for separating the weeks. Override this method if
      * you want custom separators.
-     *
-     * @param canvas The canvas to draw on
+     * 
+     * @param canvas
+     *            The canvas to draw on
      */
     protected void drawDaySeparators(Canvas canvas) {
         if (mHasSelectedDay) {
@@ -508,10 +534,10 @@ public class SimpleWeekView extends View {
             if (mShowWeekNum) {
                 selectedPosition++;
             }
-            mSelectedLeft = selectedPosition * (mWidth - mPadding * 2) / mNumCells
-                    + mPadding;
-            mSelectedRight = (selectedPosition + 1) * (mWidth - mPadding * 2) / mNumCells
-                    + mPadding;
+            mSelectedLeft = selectedPosition * (mWidth - mPadding * 2)
+                    / mNumCells + mPadding;
+            mSelectedRight = (selectedPosition + 1) * (mWidth - mPadding * 2)
+                    / mNumCells + mPadding;
         }
     }
 
@@ -533,12 +559,13 @@ public class SimpleWeekView extends View {
         if (event.getAction() != MotionEvent.ACTION_HOVER_EXIT) {
             Time hover = getDayFromLocation(event.getX());
             if (hover != null
-                    && (mLastHoverTime == null || Time.compare(hover, mLastHoverTime) != 0)) {
+                    && (mLastHoverTime == null || Time.compare(hover,
+                            mLastHoverTime) != 0)) {
                 Long millis = hover.toMillis(true);
                 String date = Utils.formatDateRange(context, millis, millis,
                         DateUtils.FORMAT_SHOW_DATE);
-                AccessibilityEvent accessEvent =
-                    AccessibilityEvent.obtain(AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED);
+                AccessibilityEvent accessEvent = AccessibilityEvent
+                        .obtain(AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED);
                 accessEvent.getText().add(date);
                 sendAccessibilityEventUnchecked(accessEvent);
                 mLastHoverTime = hover;

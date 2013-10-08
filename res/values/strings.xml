@@ -806,5 +806,6 @@
     <string name="more_string"><xliff:g id="count">%1$s</xliff:g> more...</string>
     <string name="copy_email">Copy email address</string>
     <string name="copy_number">Copy phone number</string>
+    <string name="preferences_show_lunar_title">Show lunar calendar</string>
 
 </resources>
