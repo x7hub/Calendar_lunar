@@ -1,0 +1,29 @@
+-keep class edu.bupt.calendar.selectcalendars.SelectCalendarsSyncFragment
+-keep class edu.bupt.calendar.OtherPreferences
+-keep class edu.bupt.calendar.AboutPreferences
+-keepclassmembers class edu.bupt.calendar.AllInOneActivity {
+  *** setControlsOffset(...);
+}
+-keepclassmembers class edu.bupt.calendar.selectcalendars.SelectVisibleCalendarsActivity {
+  *** handleSelectSyncedCalendarsClicked(...);
+}
+-keepclassmembers class edu.bupt.calendar.AllInOneActivity {
+  *** handleSelectSyncedCalendarsClicked(...);
+}
+-keepclassmembers class edu.bupt.calendar.DayView {
+  *** setAnimateDayHeight(...);
+  *** setAnimateDayEventHeight(...);
+  *** setMoreAllDayEventsTextAlpha(...);
+  *** setExpandDayHeightIconRotation(...);
+  *** setViewStartY(...);
+  *** setAnimateTodayAlpha(...);
+  *** setEventsAlpha(...);
+  *** getEventsAlpha(...);
+}
+-keepclassmembers class edu.bupt.calendar.month.MonthWeekEventsView {
+  *** setAnimateTodayAlpha(...);
+}
+
+-keepclassmembers class * implements android.content.SharedPreferences$Editor {
+    public *** apply();
+}
